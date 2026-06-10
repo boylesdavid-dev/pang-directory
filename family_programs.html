@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PA NG Family Programs Directory</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  body { font-family: Arial, sans-serif; background: #f4f6f9; color: #333; padding: 0.75rem; }
+  .header { background: #1F4E79; color: white; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1rem; }
+  .header h1 { font-size: 16px; font-weight: 600; margin-bottom: 3px; line-height: 1.3; }
+  .header p { font-size: 11px; opacity: 0.85; }
+  .controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; width: 100%; }
+  .controls input[type=text],
+  .controls select { width: 100%; padding: 9px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; background: white; color: #333; max-width: 100%; }
+  .count { font-size: 12px; color: #666; margin-bottom: 0.75rem; }
+  .grid { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+  .card { background: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 0.875rem; display: flex; flex-direction: column; gap: 7px; width: 100%; overflow: hidden; }
+  .card-region { font-size: 11px; font-weight: 700; color: #1F4E79; text-transform: uppercase; letter-spacing: .04em; }
+  .card-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .card-location { font-size: 12px; color: #666; }
+  .card-counties { font-size: 12px; color: #888; font-style: italic; }
+  .card-details { border-top: 1px solid #f0f0f0; padding-top: 7px; display: flex; flex-direction: column; gap: 5px; }
+  .detail-row { display: flex; align-items: flex-start; gap: 6px; font-size: 13px; color: #555; width: 100%; }
+  .detail-row a { color: #1F4E79; text-decoration: none; word-break: break-all; overflow-wrap: break-word; flex: 1; }
+  .detail-label { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: .04em; min-width: 44px; flex-shrink: 0; padding-top: 2px; }
+  .status { text-align: center; padding: 2rem; color: #888; font-size: 14px; }
+  .last-updated { text-align: right; font-size: 11px; color: #aaa; margin-top: 1rem; }
+
+  .about-toggle { width: 100%; background: #e8f0fb; border: 1px solid #c5d8f5; border-radius: 6px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: #1F4E79; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .about-toggle:hover { background: #d5e5f7; }
+  .about-arrow { font-size: 11px; transition: transform 0.2s; }
+  .about-arrow.open { transform: rotate(180deg); }
+  .about-content { display: none; background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; font-size: 13px; line-height: 1.6; color: #444; }
+  .about-content.open { display: block; }
+  .about-content h2 { font-size: 14px; font-weight: 700; color: #1F4E79; margin: 0.875rem 0 0.4rem; }
+  .about-content h2:first-child { margin-top: 0; }
+  .about-content p { margin-bottom: 0.5rem; }
+  .about-content ul { margin: 0.3rem 0 0.5rem 1.25rem; }
+  .about-content li { margin-bottom: 0.3rem; }
+  .about-content .fb-box { background: #e8f0fb; border-left: 3px solid #1877F2; padding: 0.75rem; border-radius: 0 6px 6px 0; margin-top: 0.75rem; }
+  .about-content .fb-box a { color: #1877F2; font-weight: 600; text-decoration: none; }
+  .about-content .fb-box a:hover { text-decoration: underline; }
+
+  .pdf-link { display: none; align-items: center; gap: 8px; background: #fff; border: 1.5px solid #1F4E79; border-radius: 6px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: #1F4E79; text-decoration: none; margin-bottom: 1rem; width: 100%; justify-content: center; }
+  .pdf-link:hover { background: #e8f0fb; }
+  .pdf-link span { font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>PA Army National Guard — Family Programs Directory</h1>
+  <p>Live data &middot; Updates automatically when the roster changes</p>
+</div>
+
+
+<button class="about-toggle" onclick="toggleAbout()">
+  &#9432; About Family Programs — Mission &amp; Services
+  <span class="about-arrow" id="aboutArrow">&#9660;</span>
+</button>
+<div class="about-content" id="aboutContent">
+
+  <h2>Mission</h2>
+  <p>State Family Program provides Family Assistance, promotes Family Readiness, conducts Child &amp; Youth programming, and enriches Family communication skills through outreach and education to support Pennsylvania's Military Families.</p>
+
+  <h2>8 Essential Services</h2>
+  <ul>
+    <li>ID Card &amp; DEERS Information</li>
+    <li>TRICARE</li>
+    <li>Financial Readiness</li>
+    <li>Legal</li>
+    <li>Crisis Intervention</li>
+    <li>Emergency Family Assistance Center (EFAC)</li>
+    <li>Exceptional Family Member Program (EFMP)</li>
+    <li>Community Information &amp; Outreach Services</li>
+  </ul>
+
+  <h2>Additional Services</h2>
+  <ul>
+    <li>Military, Veteran, &amp; Retiree Benefits (All Branches)</li>
+    <li>Deployment Cycle Support &amp; Outreach</li>
+    <li>Educational Programs</li>
+    <li>Employment &amp; Career Services</li>
+    <li>Behavioral &amp; Mental Health Services</li>
+    <li>Household &amp; Property</li>
+    <li>Child &amp; Youth Services &amp; Events</li>
+    <li>Regional Military Share Food Distributions</li>
+  </ul>
+
+  <h2>Volunteer &amp; SFRG Support</h2>
+  <ul>
+    <li>Hands-on Assistance for Soldier &amp; Family Readiness Groups</li>
+    <li>Orientation &amp; Trainings for Volunteers and Leadership</li>
+    <li>Briefings for Units and Command Teams</li>
+    <li>Connection to Community Resources</li>
+    <li>Information &amp; Referral Assistance</li>
+  </ul>
+
+  <p>For assistance and additional information, please call your local SFRS listed above.</p>
+
+  <div class="fb-box">
+    &#128241; Check us out on Facebook for current events and information: <a href="https://www.facebook.com/pngsmfs" target="_blank">PA National Guard Family Programs</a>
+  </div>
+
+</div>
+
+<script>
+function toggleAbout() {
+  const content = document.getElementById('aboutContent');
+  const arrow = document.getElementById('aboutArrow');
+  content.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+</script>
+
+<a href="#" target="_blank" class="pdf-link" id="familyPDF">
+  <span>&#128196;</span> Download Family Programs Resources (PDF)
+</a>
+<div class="controls">
+  <input type="text" id="search" placeholder="Search by name, region, or county..." oninput="onSearch()">
+  <select id="regionSelect" onchange="onDropdown()">
+    <option value="">-- Filter by region --</option>
+  </select>
+</div>
+
+<div class="count" id="count">Loading...</div>
+<div class="grid" id="grid"><div class="status">Loading directory data...</div></div>
+<div class="last-updated" id="updated"></div>
+
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+const SHEET_ID = '1hVLTYAhrRDTdEMLsBMmkTWHiz4xwM343hMJKDg9qKyw';
+const SHEET_NAME = 'Family Programs Contacts';
+let data = [];
+
+google.charts.load('current', { packages: ['corechart'] });
+google.charts.setOnLoadCallback(loadData);
+  loadPDFLink('Family Programs', 'familyPDF');
+
+function loadData() {
+  const query = new google.visualization.Query(
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&headers=1`
+  );
+  query.send(handleResponse);
+}
+
+function handleResponse(response) {
+  if (response.isError()) {
+    document.getElementById('grid').innerHTML = '<div class="status">&#9888; Error: ' + response.getMessage() + '</div>';
+    return;
+  }
+  const table = response.getDataTable();
+  data = [];
+  for (let i = 0; i < table.getNumberOfRows(); i++) {
+    const region = (table.getValue(i, 0) || '').toString().trim();
+    if (!region || region.toLowerCase() === 'region') continue;
+    data.push({
+      region,
+      counties: (table.getValue(i, 1) || '').toString().trim(),
+      name:     (table.getValue(i, 2) || '').toString().trim(),
+      location: (table.getValue(i, 3) || '').toString().trim(),
+      phone:    (table.getValue(i, 4) || '').toString().trim(),
+      email:    (table.getValue(i, 5) || '').toString().trim()
+    });
+  }
+
+  // Build dropdown with region + counties, deduplicated
+  const select = document.getElementById('regionSelect');
+  const seen = new Set();
+  data.forEach(d => {
+    if (seen.has(d.region)) return;
+    seen.add(d.region);
+    const opt = document.createElement('option');
+    opt.value = d.region;
+    opt.textContent = d.counties ? d.region + ' \u2014 ' + d.counties : d.region;
+    select.appendChild(opt);
+  });
+
+  document.getElementById('updated').textContent = 'Last loaded: ' + new Date().toLocaleString();
+  render();
+}
+
+function onSearch() { document.getElementById('regionSelect').value = ''; render(); }
+function onDropdown() { document.getElementById('search').value = ''; render(); }
+
+function render() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const region = document.getElementById('regionSelect').value;
+  const filtered = data.filter(d => {
+    if (region) return d.region === region;
+    if (q) return [d.region, d.name, d.location, d.counties, d.phone, d.email].join(' ').toLowerCase().includes(q);
+    return true;
+  });
+  document.getElementById('count').textContent = `Showing ${filtered.length} of ${data.length} entries`;
+  if (!filtered.length) { document.getElementById('grid').innerHTML = '<div class="status">No matching entries found.</div>'; return; }
+  document.getElementById('grid').innerHTML = filtered.map(d => `
+    <div class="card">
+      <div class="card-region">${d.region}</div>
+      ${d.name ? `<div class="card-name">${d.name}</div>` : ''}
+      ${d.location ? `<div class="card-location">&#128205; ${d.location}</div>` : ''}
+      ${d.counties ? `<div class="card-counties">Counties: ${d.counties}</div>` : ''}
+      <div class="card-details">
+        ${d.phone ? `<div class="detail-row"><span class="detail-label">Phone</span><a href="tel:${d.phone.replace(/\D/g,'')}">${d.phone}</a></div>` : ''}
+        ${d.email ? `<div class="detail-row"><span class="detail-label">Email</span><a href="mailto:${d.email}">${d.email}</a></div>` : ''}
+      </div>
+    </div>`).join('');
+}
+</script>
+
+<script>
+// Load PDF link from Document Links sheet
+const DOC_SHEET_ID = '1hVLTYAhrRDTdEMLsBMmkTWHiz4xwM343hMJKDg9qKyw';
+const DOC_SHEET_NAME = 'Document Links';
+
+function loadPDFLink(programName, buttonId) {
+  const query = new google.visualization.Query(
+    `https://docs.google.com/spreadsheets/d/${DOC_SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(DOC_SHEET_NAME)}&headers=1`
+  );
+  query.send(function(response) {
+    if (response.isError()) return;
+    const table = response.getDataTable();
+    for (let i = 0; i < table.getNumberOfRows(); i++) {
+      const prog = (table.getValue(i, 0) || '').toString().trim();
+      const link = (table.getValue(i, 1) || '').toString().trim();
+      if (prog === programName && link) {
+        const btn = document.getElementById(buttonId);
+        if (btn) {
+          btn.href = link;
+          btn.style.display = 'flex';
+        }
+      }
+    }
+  });
+}
+</script>
+
+</body>
+</html>

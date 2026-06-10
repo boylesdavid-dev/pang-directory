@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Advisors - Update Form</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  body { font-family: Arial, sans-serif; background: #f4f6f9; color: #333; padding: 0.75rem; }
+  .header { background: #1F4E79; color: white; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1rem; }
+  .header h1 { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
+  .header p { font-size: 11px; opacity: 0.85; }
+  .mode-toggle { display: flex; gap: 0; margin-bottom: 1rem; border-radius: 6px; overflow: hidden; border: 1.5px solid #1F4E79; }
+  .mode-btn { flex: 1; padding: 10px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; background: white; color: #1F4E79; }
+  .mode-btn.active { background: #1F4E79; color: white; }
+  .card { background: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 1rem; margin-bottom: 1rem; }
+  .card h2 { font-size: 13px; font-weight: 700; color: #1F4E79; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 0.75rem; }
+  .current-info { background: #f0f7ff; border: 1px solid #c5d8f5; border-radius: 6px; padding: 0.875rem; margin-bottom: 1rem; display: none; }
+  .current-info h3 { font-size: 12px; font-weight: 700; color: #1F4E79; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .current-row { font-size: 13px; color: #444; margin-bottom: 4px; display: flex; gap: 8px; }
+  .current-label { font-size: 10px; color: #999; text-transform: uppercase; min-width: 60px; flex-shrink: 0; padding-top: 2px; }
+  .form-group { margin-bottom: 0.875rem; }
+  label { display: block; font-size: 12px; font-weight: 600; color: #444; margin-bottom: 4px; }
+  input[type=text], input[type=email], input[type=tel], select { width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; background: white; color: #333; }
+  input[type=file] { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; }
+  .changed { border-color: #1F4E79 !important; background: #f0f7ff !important; }
+  .submit-btn { width: 100%; background: #1F4E79; color: white; border: none; border-radius: 6px; padding: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 0.5rem; }
+  .submit-btn:hover { background: #163d61; }
+  .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
+  .success { background: #e8f5e9; border: 1px solid #81c784; border-radius: 8px; padding: 1rem; text-align: center; color: #2e7d32; font-size: 14px; font-weight: 600; display: none; margin-bottom: 1rem; }
+  .error-msg { background: #fde8e8; border: 1px solid #e57373; border-radius: 8px; padding: 1rem; text-align: center; color: #c62828; font-size: 13px; display: none; margin-bottom: 1rem; }
+  .changes-summary { background: #fff8e1; border: 1px solid #ffe082; border-radius: 6px; padding: 0.875rem; margin-bottom: 1rem; display: none; }
+  .changes-summary h3 { font-size: 12px; font-weight: 700; color: #7d6200; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .change-row { font-size: 12px; color: #555; margin-bottom: 3px; }
+  .change-row span.old { color: #c62828; text-decoration: line-through; margin-right: 6px; }
+  .change-row span.new { color: #2e7d32; font-weight: 600; }
+  .divider { border: none; border-top: 1px solid #eee; margin: 1rem 0; }
+  .required { color: #c62828; }
+  .new-badge { background: #e8f5e9; color: #2e7d32; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Financial Advisors — Directory Management</h1>
+  <p>Admin use only &middot; Update or add financial advisor records</p>
+</div>
+
+<div class="success" id="successMsg"></div>
+<div class="error-msg" id="errorMsg"></div>
+
+<div class="mode-toggle">
+  <button class="mode-btn active" id="btnUpdate" onclick="setMode('update')">&#9998; Update Existing Record</button>
+  <button class="mode-btn" id="btnAdd" onclick="setMode('add')">&#43; Add New Record</button>
+</div>
+
+<!-- UPDATE MODE -->
+<div id="updateMode">
+  <div class="card">
+    <h2>Step 1 — Select Location</h2>
+    <div class="form-group">
+      <label>Location <span class="required">*</span></label>
+      <select id="locationSelect" onchange="loadCurrentData()">
+        <option value="">-- Select location --</option>
+        <option>Cambridge Springs</option>
+        <option>Horsham</option>
+        <option>Pittsburgh</option>
+        <option>Philadelphia</option>
+        <option>Fort Indiantown Gap</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="current-info" id="currentInfo">
+    <h3>&#128196; Current Information on File</h3>
+    <div id="currentDisplay"></div>
+  </div>
+
+  <div class="card" id="updateCard" style="display:none">
+    <h2>Step 2 — Edit Information</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:0.875rem">Fields pre-filled with current data. Changed fields will highlight blue.</p>
+    <div class="form-group"><label>Name and Credentials</label><input type="text" id="u_name" placeholder="e.g. John Smith, CFP®" oninput="checkChanges()"></div>
+    <div class="form-group"><label>Phone</label><input type="tel" id="u_phone" oninput="checkChanges()"></div>
+    <div class="form-group"><label>Email Address</label><input type="email" id="u_email" oninput="checkChanges()"></div>
+    <div class="form-group">
+      <label>Upload Updated PDF Document <span style="font-size:11px;color:#888;font-weight:400">(optional)</span></label>
+      <input type="file" id="u_pdf" accept=".pdf">
+    </div>
+    <hr class="divider">
+    <div class="form-group"><label>Date of Submission</label><input type="text" id="u_date" readonly style="background:#f5f5f5;color:#888"></div>
+  </div>
+
+  <div class="changes-summary" id="changesSummary">
+    <h3>&#9998; Pending Changes</h3>
+    <div id="changesDisplay"></div>
+  </div>
+
+  <button class="submit-btn" id="updateSubmitBtn" onclick="submitUpdate()" style="display:none">Submit Update</button>
+</div>
+
+<!-- ADD MODE -->
+<div id="addMode" style="display:none">
+  <div class="card">
+    <h2>New Record <span class="new-badge">NEW</span></h2>
+    <div class="form-group">
+      <label>Location <span class="required">*</span></label>
+      <select id="a_location" required>
+        <option value="">-- Select location --</option>
+        <option>Cambridge Springs</option>
+        <option>Horsham</option>
+        <option>Pittsburgh</option>
+        <option>Philadelphia</option>
+        <option>Fort Indiantown Gap</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Name and Credentials <span class="required">*</span></label><input type="text" id="a_name" placeholder="e.g. John Smith, CFP®" required></div>
+    <div class="form-group"><label>Phone</label><input type="tel" id="a_phone"></div>
+    <div class="form-group"><label>Email Address</label><input type="email" id="a_email"></div>
+    <div class="form-group">
+      <label>Upload PDF Document <span style="font-size:11px;color:#888;font-weight:400">(optional)</span></label>
+      <input type="file" id="a_pdf" accept=".pdf">
+    </div>
+    <hr class="divider">
+    <div class="form-group"><label>Date of Submission</label><input type="text" id="a_date" readonly style="background:#f5f5f5;color:#888"></div>
+  </div>
+  <button class="submit-btn" onclick="submitNew()">Add New Record</button>
+</div>
+
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+const SHEET_ID   = '1hVLTYAhrRDTdEMLsBMmkTWHiz4xwM343hMJKDg9qKyw';
+const SHEET_NAME = 'Financial Advisors';
+
+let currentData = {};
+let allData = [];
+
+document.getElementById('a_date').value = new Date().toLocaleDateString();
+
+google.charts.load('current', { packages: ['corechart'] });
+google.charts.setOnLoadCallback(() => {
+  const query = new google.visualization.Query(
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&headers=1`
+  );
+  query.send(response => {
+    if (response.isError()) return;
+    const table = response.getDataTable();
+    for (let i = 0; i < table.getNumberOfRows(); i++) {
+      allData.push({
+        location: (table.getValue(i, 0) || '').toString().trim(),
+        name:     (table.getValue(i, 1) || '').toString().trim(),
+        phone:    (table.getValue(i, 2) || '').toString().trim(),
+        email:    (table.getValue(i, 3) || '').toString().trim()
+      });
+    }
+  });
+});
+
+function setMode(mode) {
+  document.getElementById('updateMode').style.display = mode === 'update' ? 'block' : 'none';
+  document.getElementById('addMode').style.display    = mode === 'add'    ? 'block' : 'none';
+  document.getElementById('btnUpdate').classList.toggle('active', mode === 'update');
+  document.getElementById('btnAdd').classList.toggle('active', mode === 'add');
+  document.getElementById('successMsg').style.display = 'none';
+  document.getElementById('errorMsg').style.display = 'none';
+}
+
+function loadCurrentData() {
+  const location = document.getElementById('locationSelect').value;
+  if (!location) return;
+  currentData = allData.find(d => d.location === location) || {};
+
+  document.getElementById('currentDisplay').innerHTML = [
+    ['Name', currentData.name], ['Phone', currentData.phone], ['Email', currentData.email]
+  ].filter(([, v]) => v).map(([l, v]) => `
+    <div class="current-row"><span class="current-label">${l}</span><span>${v}</span></div>`).join('');
+
+  document.getElementById('currentInfo').style.display = 'block';
+  document.getElementById('u_name').value  = currentData.name  || '';
+  document.getElementById('u_phone').value = currentData.phone || '';
+  document.getElementById('u_email').value = currentData.email || '';
+  document.getElementById('u_date').value  = new Date().toLocaleDateString();
+  document.getElementById('updateCard').style.display = 'block';
+  document.getElementById('updateSubmitBtn').style.display = 'block';
+  checkChanges();
+}
+
+function checkChanges() {
+  const fields = [
+    { label: 'Name', id: 'u_name', key: 'name' },
+    { label: 'Phone', id: 'u_phone', key: 'phone' },
+    { label: 'Email', id: 'u_email', key: 'email' }
+  ];
+  const changes = [];
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    const oldVal = (currentData[f.key] || '').trim();
+    const newVal = el.value.trim();
+    if (oldVal !== newVal) { el.classList.add('changed'); changes.push({ label: f.label, old: oldVal, new: newVal }); }
+    else { el.classList.remove('changed'); }
+  });
+  const summary = document.getElementById('changesSummary');
+  if (changes.length > 0) {
+    document.getElementById('changesDisplay').innerHTML = changes.map(c => `
+      <div class="change-row"><strong>${c.label}:</strong>
+        ${c.old ? `<span class="old">${c.old}</span>` : ''}
+        <span class="new">${c.new || '(cleared)'}</span>
+      </div>`).join('');
+    summary.style.display = 'block';
+  } else { summary.style.display = 'none'; }
+}
+
+async function submitUpdate() {
+  const location = document.getElementById('locationSelect').value;
+  if (!location) { alert('Please select a location.'); return; }
+  const btn = document.getElementById('updateSubmitBtn');
+  btn.disabled = true; btn.textContent = 'Submitting...';
+  const payload = {
+    action: 'update', sheet: SHEET_NAME, keyCol: 'Location', keyVal: location,
+    data: {
+      'Location': location,
+      'Name and Credentials': document.getElementById('u_name').value.trim(),
+      'Phone': document.getElementById('u_phone').value.trim(),
+      'Email Address': document.getElementById('u_email').value.trim(),
+      'Submission Date': new Date().toLocaleDateString()
+    }
+  };
+  await sendPayload(payload, btn, 'Submit Update');
+}
+
+async function submitNew() {
+  const location = document.getElementById('a_location').value;
+  const name     = document.getElementById('a_name').value.trim();
+  if (!location) { alert('Please select a location.'); return; }
+  if (!name)     { alert('Please enter a name.'); return; }
+  const btn = document.querySelector('#addMode .submit-btn');
+  btn.disabled = true; btn.textContent = 'Adding...';
+  const payload = {
+    action: 'add', sheet: SHEET_NAME,
+    data: {
+      'Location': location,
+      'Name and Credentials': name,
+      'Phone': document.getElementById('a_phone').value.trim(),
+      'Email Address': document.getElementById('a_email').value.trim(),
+      'Submission Date': new Date().toLocaleDateString()
+    }
+  };
+  await sendPayload(payload, btn, 'Add New Record');
+}
+
+function sendPayload(payload, btn, btnLabel) {
+  fetch('/api/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(result => {
+    if (result.status === 'success') {
+      const msg = document.getElementById('successMsg');
+      msg.textContent = payload.action === 'add' ? 'New record added successfully!' : 'Update submitted successfully!';
+      msg.style.display = 'block';
+      window.scrollTo(0, 0);
+      btn.style.display = 'none';
+    } else {
+      const errEl = document.getElementById('errorMsg');
+      errEl.textContent = 'Error: ' + result.message;
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = btnLabel;
+    }
+  })
+  .catch(err => {
+    const errEl = document.getElementById('errorMsg');
+    errEl.textContent = 'Network error: ' + err.message;
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = btnLabel;
+  });
+}
+</script>
+</body>
+</html>

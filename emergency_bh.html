@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PA NG Emergency BH Resources</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  body { font-family: Arial, sans-serif; background: #f4f6f9; color: #333; padding: 0.75rem; }
+  .header { background: #1F4E79; color: white; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1rem; }
+  .header h1 { font-size: 16px; font-weight: 600; margin-bottom: 3px; line-height: 1.3; }
+  .header p { font-size: 11px; opacity: 0.85; }
+
+  .section { background: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 1rem; margin-bottom: 0.875rem; display: flex; flex-direction: column; gap: 8px; }
+  .section-title { font-size: 13px; font-weight: 700; color: white; background: #1F4E79; padding: 6px 12px; border-radius: 6px; text-transform: uppercase; letter-spacing: .05em; }
+  .crisis-title { background: #C0392B; }
+  .resource-title { background: #1a6b3a; }
+  .chaplain-title { background: #5d4e8a; }
+  .county-title { background: #7d6200; }
+  .warmline-title { background: #0e6b6b; }
+
+  .contact-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .contact-role { font-size: 12px; color: #666; margin-bottom: 2px; }
+  .detail-row { display: flex; align-items: flex-start; gap: 6px; font-size: 13px; color: #555; margin-bottom: 4px; }
+  .detail-label { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: .04em; min-width: 44px; flex-shrink: 0; padding-top: 2px; }
+  .detail-row a { color: #1F4E79; text-decoration: none; word-break: break-all; flex: 1; }
+  .detail-row a:hover { text-decoration: underline; }
+
+  .resource-block { border-top: 1px solid #f0f0f0; padding-top: 10px; margin-top: 4px; }
+  .resource-block:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .resource-name { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 5px; }
+  .resource-desc { font-size: 12px; color: #777; margin-top: 5px; line-height: 1.5; }
+  .resource-detail { font-size: 13px; color: #555; margin-bottom: 3px; display: flex; align-items: flex-start; gap: 6px; }
+  .resource-detail a { color: #1F4E79; text-decoration: none; word-break: break-all; }
+  .resource-detail a:hover { text-decoration: underline; }
+  .resource-label { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: .04em; min-width: 44px; flex-shrink: 0; padding-top: 2px; }
+
+  .county-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
+  .county-row:last-child { border-bottom: none; }
+  .county-name { font-weight: 500; color: #333; }
+  .county-phone a { color: #1F4E79; text-decoration: none; font-weight: 500; }
+
+  .warmline-number { font-size: 22px; font-weight: 700; color: #0e6b6b; text-align: center; padding: 0.5rem 0; }
+  .warmline-number a { color: inherit; text-decoration: none; }
+  .warmline-desc { font-size: 12px; color: #777; text-align: center; }
+
+  .chaplain-block { border-top: 1px solid #f0f0f0; padding-top: 10px; margin-top: 4px; }
+  .chaplain-block:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+
+  .about-toggle { width: 100%; background: #e8f0fb; border: 1px solid #c5d8f5; border-radius: 6px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: #1F4E79; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .about-toggle:hover { background: #d5e5f7; }
+  .about-arrow { font-size: 11px; transition: transform 0.2s; }
+  .about-arrow.open { transform: rotate(180deg); }
+  .about-content { display: none; background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; font-size: 13px; line-height: 1.6; color: #444; }
+  .about-content.open { display: block; }
+  .about-content h2 { font-size: 14px; font-weight: 700; color: #1F4E79; margin: 0.875rem 0 0.4rem; }
+  .about-content h2:first-child { margin-top: 0; }
+  .about-content p { margin-bottom: 0.5rem; }
+  .about-content ul { margin: 0.3rem 0 0.5rem 1.25rem; }
+  .about-content li { margin-bottom: 0.3rem; }
+  .about-content .emergency-box { background: #fde8e8; border-left: 3px solid #C0392B; padding: 0.75rem; border-radius: 0 6px 6px 0; margin-bottom: 0.75rem; }
+  .about-content .note-box { background: #fff8e1; border-left: 3px solid #f9a825; padding: 0.75rem; border-radius: 0 6px 6px 0; margin-top: 0.5rem; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>PA Army National Guard — Emergency BH Resources</h1>
+  <p>24/7 crisis support &middot; Confidential assistance available</p>
+</div>
+
+<!-- Regional Social Worker Warm Line -->
+
+<button class="about-toggle" onclick="toggleAbout()">
+  &#9432; When To Use Each Resource
+  <span class="about-arrow" id="aboutArrow">&#9660;</span>
+</button>
+<div class="about-content" id="aboutContent">
+
+  <div class="emergency-box">
+    <h2 style="color:#C0392B;margin-top:0">&#9112; Call 911 When:</h2>
+    <ul>
+      <li>Person is threatening to kill self or someone else</li>
+      <li>Suicide attempt has occurred or is in progress</li>
+      <li>Person is violently acting out</li>
+      <li>If handling a suicidal crisis by phone</li>
+    </ul>
+  </div>
+
+  <h2>Unit or Full Time Support Chaplain</h2>
+  <ul>
+    <li>When uncertain of what to do</li>
+    <li>Crisis Intervention</li>
+    <li>Confidential Source</li>
+    <li>Collaboration with BHO, Medical, &amp; LSW</li>
+  </ul>
+
+  <h2>State BH Clinician</h2>
+  <ul>
+    <li>Clinical Consultation</li>
+    <li>Command Directed BH Evaluations</li>
+    <li>Fitness For Duty Evaluations</li>
+    <li>Collaboration with Chaplain, BHO, Medical</li>
+    <li>Profiling</li>
+    <li>BH SIR Management / Duty To Warn</li>
+  </ul>
+
+  <h2>Regional Social Worker</h2>
+  <ul>
+    <li>Crisis Intervention</li>
+    <li>Risk Assessments / Needs Assessments</li>
+    <li>BH Resources and Referrals</li>
+    <li>Short-Term Problem Resolution Care</li>
+    <li>Community Care Coordination</li>
+    <li>BH Case Management</li>
+  </ul>
+
+  <div class="note-box">
+    <strong>Notes:</strong>
+    <ul style="margin-top:0.4rem">
+      <li>PAARNG Centralized Warm-Line and Weekend Coverage for needs assessment, BH resources and referrals: <strong>1-888-818-2773</strong></li>
+      <li>Regional Social Workers available <strong>24/7</strong>.</li>
+      <li>State BH Clinicians available <strong>Monday–Friday during duty day</strong>.</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+function toggleAbout() {
+  const content = document.getElementById('aboutContent');
+  const arrow = document.getElementById('aboutArrow');
+  content.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+</script>
+
+<div class="section-title warmline-title">&#128222; Regional Social Worker Warm Line</div>
+<div class="section">
+  <div class="warmline-number"><a href="tel:18888182773">1-888-818-2773</a></div>
+  <div class="warmline-desc">Connect with a regional social worker for non-crisis support and referrals.</div>
+</div>
+
+<!-- Full Time Chaplains -->
+<div class="section-title chaplain-title">Full Time Chaplains</div>
+<div class="section">
+  <div class="chaplain-block">
+    <div class="contact-name">CH (MAJ) David Boyles</div>
+    <div class="contact-role">Full Time Support Chaplain</div>
+    <div class="detail-row"><span class="detail-label">Cell</span><a href="tel:15703511172">1-570-351-1172</a></div>
+    <div class="detail-row"><span class="detail-label">Office</span><a href="tel:17178612550">1-717-861-2550</a></div>
+    <div class="detail-row"><span class="detail-label">Email</span><a href="mailto:david.e.boyles3.mil@army.mil">david.e.boyles3.mil@army.mil</a></div>
+  </div>
+  <div class="chaplain-block">
+    <div class="contact-name">CH (CPT) Ezekiel Mack</div>
+    <div class="contact-role">Operations/TDA Chaplain</div>
+    <div class="detail-row"><span class="detail-label">Cell</span><a href="tel:12677335522">1-267-733-5522</a></div>
+    <div class="detail-row"><span class="detail-label">Email</span><a href="mailto:ezekiel.r.mack.mil@army.mil">ezekiel.r.mack.mil@army.mil</a></div>
+  </div>
+</div>
+
+<!-- State BH Clinician -->
+<div class="section-title">State Behavioral Health Clinician</div>
+<div class="section">
+  <div class="contact-name">Brandi Cash, LCSW</div>
+  <div class="detail-row"><span class="detail-label">Office</span><a href="tel:17178618431">1-717-861-8431</a></div>
+  <div class="detail-row"><span class="detail-label">Cell</span><a href="tel:17176447930">1-717-644-7930</a></div>
+</div>
+
+<!-- Crisis Hotlines -->
+<div class="section-title crisis-title">&#9888; Crisis Hotlines</div>
+<div class="section">
+
+  <div class="resource-block">
+    <div class="resource-name">National Suicide Prevention Lifeline</div>
+    <div class="resource-detail"><span class="resource-label">Call</span><span><a href="tel:988">988</a> or <a href="tel:18002738255">1-800-273-8255</a></span></div>
+    <div class="resource-detail"><span class="resource-label">Text</span><span>838255 or 741741 (PA)</span></div>
+    <div class="resource-detail"><span class="resource-label">Web</span><span><a href="https://988lifeline.org" target="_blank">988lifeline.org</a> | <a href="https://veteranscrisisline.net" target="_blank">veteranscrisisline.net</a></span></div>
+    <div class="resource-desc">Confidential emotional support for people in suicidal crisis or emotional distress, 24/7 across the United States.</div>
+  </div>
+
+  <div class="resource-block">
+    <div class="resource-name">Military One Source</div>
+    <div class="resource-detail"><span class="resource-label">Call</span><a href="tel:18003429647">1-800-342-9647</a></div>
+    <div class="resource-detail"><span class="resource-label">Web</span><a href="https://www.militaryonesource.mil" target="_blank">militaryonesource.mil</a></div>
+    <div class="resource-desc">Free and confidential non-crisis support available 24/7 for relationship, family, or financial challenges for service members and their dependents.</div>
+  </div>
+
+  <div class="resource-block">
+    <div class="resource-name">Tricare</div>
+    <div class="resource-detail"><span class="resource-label">Web</span><a href="https://www.tricare.mil" target="_blank">tricare.mil</a></div>
+    <div class="resource-desc">Helps beneficiaries find behavioral health providers for conditions such as ADHD, anxiety, PTSD, depression, mood disorders, sleep, and eating disorders.</div>
+  </div>
+
+</div>
+
+<!-- County Crisis Lines -->
+<div class="section-title county-title">County Crisis Lines</div>
+<div class="section">
+  <div class="county-row"><span class="county-name">Cambria County</span><span class="county-phone"><a href="tel:18772689463">1-877-268-9463</a></span></div>
+  <div class="county-row"><span class="county-name">Allegheny County</span><span class="county-phone"><a href="tel:18887968226">1-888-796-8226</a></span></div>
+  <div class="county-row"><span class="county-name">Lackawanna County</span><span class="county-phone"><a href="tel:15702821732">1-570-282-1732</a></span></div>
+  <div class="county-row"><span class="county-name">Lebanon County</span><span class="county-phone"><a href="tel:17172743363">1-717-274-3363</a></span></div>
+  <div class="county-row"><span class="county-name">Lehigh County</span><span class="county-phone"><a href="tel:16107823127">1-610-782-3127</a></span></div>
+  <div class="county-row"><span class="county-name">Montgomery County</span><span class="county-phone"><a href="tel:12407774000">1-240-777-4000</a></span></div>
+</div>
+
+
+</body>
+</html>
