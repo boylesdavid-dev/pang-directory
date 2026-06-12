@@ -4,26 +4,36 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw1OSynHZ9y_sXR
 
 function makeRequest(url, postData, redirectCount) {
   return new Promise((resolve, reject) => {
-    if (redirectCount > 5) {
+    if (redirectCount > 10) {
       reject(new Error('Too many redirects'));
       return;
     }
 
     const parsedUrl = new URL(url);
+    const isPost = postData && redirectCount === 0;
+
     const options = {
       hostname: parsedUrl.hostname,
       path: parsedUrl.pathname + parsedUrl.search,
-      method: postData ? 'POST' : 'GET',
-      headers: postData ? {
+      method: isPost ? 'POST' : 'GET',
+      headers: isPost ? {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(postData)
-      } : {}
+      } : {
+        'Content-Type': 'application/json'
+      },
+      timeout: 25000
     };
 
     const req = https.request(options, (res) => {
       // Follow redirects
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        resolve(makeRequest(res.headers.location, null, redirectCount + 1));
+        let location = res.headers.location;
+        // Handle relative redirects
+        if (!location.startsWith('http')) {
+          location = `https://${parsedUrl.hostname}${location}`;
+        }
+        resolve(makeRequest(location, null, redirectCount + 1));
         return;
       }
 
@@ -33,34 +43,52 @@ function makeRequest(url, postData, redirectCount) {
         try {
           resolve(JSON.parse(data));
         } catch (e) {
-          reject(new Error('Invalid JSON response: ' + data.substring(0, 200)));
+          // If we get HTML back it might be another redirect page
+          if (data.includes('Moved') || data.includes('redirect')) {
+            const match = data.match(/HREF="([^"]+)"/i);
+            if (match) {
+              resolve(makeRequest(match[1], null, redirectCount + 1));
+              return;
+            }
+          }
+          reject(new Error('Invalid response: ' + data.substring(0, 300)));
         }
       });
     });
 
-    req.on('error', reject);
-    if (postData) req.write(postData);
+    req.on('timeout', () => {
+      req.destroy();
+      reject(new Error('Request timed out after 25 seconds'));
+    });
+
+    req.on('error', (err) => {
+      reject(new Error('Request error: ' + err.message));
+    });
+
+    if (isPost) req.write(postData);
     req.end();
   });
 }
 
 exports.handler = async function(event, context) {
+  // Increase function timeout
+  context.callbackWaitsForEmptyEventLoop = false;
+
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
   if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS'
-      },
-      body: ''
-    };
+    return { statusCode: 200, headers: corsHeaders, body: '' };
   }
 
   if (event.httpMethod === 'GET') {
     return {
       statusCode: 200,
-      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+      headers: corsHeaders,
       body: JSON.stringify({ status: 'ok', message: 'PA NG Directory Update Function is running' })
     };
   }
@@ -68,7 +96,7 @@ exports.handler = async function(event, context) {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: corsHeaders,
       body: JSON.stringify({ status: 'error', message: 'Method not allowed' })
     };
   }
@@ -77,16 +105,13 @@ exports.handler = async function(event, context) {
     const result = await makeRequest(APPS_SCRIPT_URL, event.body, 0);
     return {
       statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
-      },
+      headers: corsHeaders,
       body: JSON.stringify(result)
     };
   } catch (err) {
     return {
       statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': '*' },
+      headers: corsHeaders,
       body: JSON.stringify({ status: 'error', message: err.message })
     };
   }
