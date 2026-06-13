@@ -14,9 +14,19 @@
   .crisis-box { background: #C0392B; color: white; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
   .crisis-box h2 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
   .crisis-box a { color: white; font-weight: 700; font-size: 15px; display: block; margin-bottom: 4px; text-decoration: none; }
+  .about-toggle { width: 100%; background: #e8f0fb; border: 1px solid #c5d8f5; border-radius: 6px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: #1F4E79; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .about-toggle:hover { background: #d5e5f7; }
+  .about-arrow { font-size: 11px; transition: transform 0.2s; }
+  .about-arrow.open { transform: rotate(180deg); }
+  .about-content { display: none; background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; font-size: 13px; line-height: 1.6; color: #444; }
+  .about-content.open { display: block; }
+  .about-content h2 { font-size: 14px; font-weight: 700; color: #1F4E79; margin: 0.875rem 0 0.4rem; }
+  .about-content h2:first-child { margin-top: 0; }
+  .about-content p { margin-bottom: 0.5rem; }
+  .pdf-link { display: none; align-items: center; gap: 8px; background: #fff; border: 1.5px solid #1F4E79; border-radius: 6px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: #1F4E79; text-decoration: none; margin-bottom: 1rem; width: 100%; justify-content: center; }
+  .pdf-link:hover { background: #e8f0fb; }
   .controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; width: 100%; }
-  .controls input[type=text],
-  .controls select { width: 100%; padding: 9px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; background: white; color: #333; max-width: 100%; }
+  .controls input[type=text], .controls select { width: 100%; padding: 9px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; background: white; color: #333; max-width: 100%; }
   .count { font-size: 12px; color: #666; margin-bottom: 0.75rem; }
   .grid { display: flex; flex-direction: column; gap: 10px; width: 100%; }
   .card { background: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 0.875rem; display: flex; flex-direction: column; gap: 7px; width: 100%; overflow: hidden; }
@@ -28,21 +38,14 @@
   .detail-row a { color: #1F4E79; text-decoration: none; word-break: break-all; overflow-wrap: break-word; flex: 1; }
   .detail-label { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: .04em; min-width: 44px; flex-shrink: 0; padding-top: 2px; }
   .note { font-size: 12px; color: #888; font-style: italic; border-top: 1px solid #f0f0f0; padding-top: 6px; word-break: break-word; }
+  .share-btn { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 4px; padding: 7px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; cursor: pointer; font-size: 12px; color: #555; width: 100%; font-family: Arial, sans-serif; }
+  .share-btn:hover { background: #e8f0fb; color: #1F4E79; border-color: #1F4E79; }
   .status { text-align: center; padding: 2rem; color: #888; font-size: 14px; }
   .last-updated { text-align: right; font-size: 11px; color: #aaa; margin-top: 1rem; }
-
-  .pdf-link { display: none; align-items: center; gap: 8px; background: #fff; border: 1.5px solid #1F4E79; border-radius: 6px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: #1F4E79; text-decoration: none; margin-bottom: 1rem; width: 100%; justify-content: center; }
-  .pdf-link:hover { background: #e8f0fb; }
-  .pdf-link span { font-size: 16px; }
-
-  .copied-msg { font-size: 11px; color: #2e7d32; text-align: center; display: none; margin-top: 4px; }
-
-  .share-btn { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 6px; padding: 6px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; cursor: pointer; font-size: 12px; color: #555; width: 100%; }
-  .share-btn:hover { background: #e8f0fb; color: #1F4E79; border-color: #1F4E79; }
-  .share-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 </style>
 </head>
 <body>
+
 <div class="header">
   <h1>PA Army National Guard — Psychological Health Directory</h1>
   <p>Live data &middot; Updates automatically when the roster changes</p>
@@ -54,9 +57,16 @@
   <a href="tel:18003424673">SAMHSA Helpline: 1-800-342-4673</a>
 </div>
 
+<button class="about-toggle" onclick="toggleAbout()">
+  &#9432; About the Psychological Health Program
+  <span class="about-arrow" id="aboutArrow">&#9660;</span>
+</button>
+<div class="about-content" id="aboutContent"></div>
+
 <a href="#" target="_blank" class="pdf-link" id="psychPDF">
-  <span>&#128196;</span> Download Psychological Health Resources (PDF)
+  &#128196; Download Psychological Health Resources (PDF)
 </a>
+
 <div class="controls">
   <input type="text" id="search" placeholder="Search by name, region, or role..." oninput="onSearch()">
   <select id="regionSelect" onchange="onDropdown()">
@@ -76,18 +86,32 @@ let data = [];
 
 google.charts.load('current', { packages: ['corechart'] });
 google.charts.setOnLoadCallback(loadData);
-  loadPDFLink('Psych Health', 'psychPDF');
 
 function loadData() {
   const query = new google.visualization.Query(
-    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&headers=1`
+    'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?sheet=' + encodeURIComponent(SHEET_NAME) + '&headers=1'
   );
   query.send(handleResponse);
+
+  // Load PDF link
+  const docQuery = new google.visualization.Query(
+    'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?sheet=Document%20Links&headers=1'
+  );
+  docQuery.send(function(r) {
+    if (r.isError()) return;
+    const t = r.getDataTable();
+    for (let i = 0; i < t.getNumberOfRows(); i++) {
+      if ((t.getValue(i,0)||'').toString().trim() === 'Psych Health') {
+        const link = (t.getValue(i,1)||'').toString().trim();
+        if (link) { const btn = document.getElementById('psychPDF'); btn.href = link; btn.style.display = 'flex'; }
+      }
+    }
+  });
 }
 
 function handleResponse(response) {
   if (response.isError()) {
-    document.getElementById('grid').innerHTML = '<div class="status">&#9888; Error: ' + response.getMessage() + '</div>';
+    document.getElementById('grid').innerHTML = '<div class="status">Error: ' + response.getMessage() + '</div>';
     return;
   }
   const table = response.getDataTable();
@@ -106,140 +130,90 @@ function handleResponse(response) {
     });
   }
   const select = document.getElementById('regionSelect');
-  [...new Set(data.map(d => d.region))].forEach(r => {
+  const seen = new Set();
+  data.forEach(function(d) {
+    if (seen.has(d.region)) return;
+    seen.add(d.region);
     const opt = document.createElement('option');
-    opt.value = r; opt.textContent = r;
+    opt.value = d.region;
+    opt.textContent = d.region;
     select.appendChild(opt);
   });
   document.getElementById('updated').textContent = 'Last loaded: ' + new Date().toLocaleString();
   render();
 }
 
+function toggleAbout() {
+  document.getElementById('aboutContent').classList.toggle('open');
+  document.getElementById('aboutArrow').classList.toggle('open');
+}
+
 function onSearch() { document.getElementById('regionSelect').value = ''; render(); }
 function onDropdown() { document.getElementById('search').value = ''; render(); }
+
+function shareContact(index) {
+  const d = data[index];
+  const lines = [];
+  if (d.role)   lines.push(d.role);
+  if (d.name)   lines.push(d.name);
+  if (d.region) lines.push('Location: ' + d.region);
+  if (d.cell)   lines.push('Cell: ' + d.cell);
+  if (d.office) lines.push('Office: ' + d.office);
+  if (d.email)  lines.push('Email: ' + d.email);
+  if (d.notes)  lines.push(d.notes);
+  const text = lines.join('\n');
+
+  if (navigator.share) {
+    navigator.share({ title: d.name || d.role, text: text }).catch(function() { copyText(text); });
+  } else {
+    copyText(text);
+  }
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(function() {
+    alert('Contact info copied to clipboard!');
+  }).catch(function() {
+    alert(text);
+  });
+}
 
 function render() {
   const q = document.getElementById('search').value.toLowerCase();
   const region = document.getElementById('regionSelect').value;
-  const filtered = data.filter(d => {
-    if (region) return d.region === region;
-    if (q) return [d.role, d.name, d.region, d.cell, d.email, d.notes].join(' ').toLowerCase().includes(q);
-    return true;
+  const filtered = [];
+  const indices = [];
+  data.forEach(function(d, i) {
+    const matchQ = !q || [d.role, d.name, d.region, d.cell, d.email, d.notes].join(' ').toLowerCase().includes(q);
+    const matchR = !region || d.region === region;
+    if (matchQ && matchR) { filtered.push(d); indices.push(i); }
   });
-  document.getElementById('count').textContent = `Showing ${filtered.length} of ${data.length} entries`;
-  if (!filtered.length) { document.getElementById('grid').innerHTML = '<div class="status">No matching entries found.</div>'; return; }
-  document.getElementById('grid').innerHTML = filtered.map(d => `
-    <div class="card">
-      <div class="card-role">${d.role}</div>
-      ${d.name ? `<div class="card-name">${d.name}</div>` : ''}
-      ${d.region ? `<div class="card-region">&#128205; ${d.region}</div>` : ''}
-      <div class="card-details">
-        ${d.cell   ? `<div class="detail-row"><span class="detail-label">Cell</span><a href="tel:${d.cell.replace(/\D/g,'')}">${d.cell}</a></div>` : ''}
-        ${d.office ? `<div class="detail-row"><span class="detail-label">Office</span><a href="tel:${d.office.replace(/\D/g,'')}">${d.office}</a></div>` : ''}
-        ${d.email  ? `<div class="detail-row"><span class="detail-label">Email</span><a href="mailto:${d.email}">${d.email}</a></div>` : ''}
-      </div>
-      ${d.notes ? `<div class="note">&#8505; ${d.notes}</div>` : ''}
-      
-      
-      <button class="share-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share Contact</button>
-    </div>`).join('');
-}
-</script>
 
-<script>
-// Load PDF link from Document Links sheet
-const DOC_SHEET_ID = '1hVLTYAhrRDTdEMLsBMmkTWHiz4xwM343hMJKDg9qKyw';
-const DOC_SHEET_NAME = 'Document Links';
+  document.getElementById('count').textContent = 'Showing ' + filtered.length + ' of ' + data.length + ' entries';
 
-function loadPDFLink(programName, buttonId) {
-  const query = new google.visualization.Query(
-    `https://docs.google.com/spreadsheets/d/${DOC_SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(DOC_SHEET_NAME)}&headers=1`
-  );
-  query.send(function(response) {
-    if (response.isError()) return;
-    const table = response.getDataTable();
-    for (let i = 0; i < table.getNumberOfRows(); i++) {
-      const prog = (table.getValue(i, 0) || '').toString().trim();
-      const link = (table.getValue(i, 1) || '').toString().trim();
-      if (prog === programName && link) {
-        const btn = document.getElementById(buttonId);
-        if (btn) {
-          btn.href = link;
-          btn.style.display = 'flex';
-        }
-      }
-    }
-  });
-}
-</script>
-
-
-<script>
-function shareContact(name, unit, cell, office, email, notes) {
-  const lines = [];
-  if (unit)   lines.push(unit);
-  if (name)   lines.push(name);
-  if (cell)   lines.push('Cell: ' + cell);
-  if (office) lines.push('Office: ' + office);
-  if (email)  lines.push('Email: ' + email);
-  if (notes)  lines.push(notes);
-  const text = lines.join('\n');
-
-  if (navigator.share) {
-    navigator.share({ title: name || unit, text: text })
-      .catch(() => copyToClipboard(text));
-  } else {
-    copyToClipboard(text);
+  if (!filtered.length) {
+    document.getElementById('grid').innerHTML = '<div class="status">No matching entries found.</div>';
+    return;
   }
-}
 
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    const msgs = document.querySelectorAll('.copied-msg');
-    msgs.forEach(m => m.style.display = 'none');
-    // Show the most recently clicked one
-    const active = document.querySelector('.copied-msg.active-copy');
-    if (active) { active.style.display = 'block'; setTimeout(() => { active.style.display = 'none'; active.classList.remove('active-copy'); }, 2000); }
-  }).catch(() => {
-    alert('Copied:\n' + text);
-  });
-}
-</script>
-
-<script>
-document.addEventListener('click', function(e) {
-  const btn = e.target.closest('.share-btn');
-  if (!btn) return;
-  const card = btn.closest('.card');
-  const lines = [];
-  const unit  = card.querySelector('.card-unit, .card-role, .card-location, .card-region');
-  const name  = card.querySelector('.card-name');
-  const rows  = card.querySelectorAll('.detail-row a');
-  const note  = card.querySelector('.note');
-  if (unit) lines.push(unit.textContent.trim());
-  if (name) lines.push(name.textContent.trim());
-  rows.forEach(a => {
-    const label = a.closest('.detail-row').querySelector('.detail-label');
-    lines.push((label ? label.textContent.trim() + ': ' : '') + a.textContent.trim());
-  });
-  if (note) lines.push(note.textContent.trim());
-  const text = lines.join('\n');
-
-  if (navigator.share) {
-    navigator.share({ title: (name || unit || {textContent:''}).textContent.trim(), text: text })
-      .catch(() => copyText(text, btn));
-  } else {
-    copyText(text, btn);
+  var html = '';
+  for (var i = 0; i < filtered.length; i++) {
+    var d = filtered[i];
+    var idx = indices[i];
+    html += '<div class="card">';
+    html += '<div class="card-role">' + d.role + '</div>';
+    if (d.name)   html += '<div class="card-name">' + d.name + '</div>';
+    if (d.region) html += '<div class="card-region">&#128205; ' + d.region + '</div>';
+    html += '<div class="card-details">';
+    if (d.cell)   html += '<div class="detail-row"><span class="detail-label">Cell</span><a href="tel:' + d.cell.replace(/\D/g,'') + '">' + d.cell + '</a></div>';
+    if (d.office) html += '<div class="detail-row"><span class="detail-label">Office</span><a href="tel:' + d.office.replace(/\D/g,'') + '">' + d.office + '</a></div>';
+    if (d.email)  html += '<div class="detail-row"><span class="detail-label">Email</span><a href="mailto:' + d.email + '">' + d.email + '</a></div>';
+    html += '</div>';
+    if (d.notes)  html += '<div class="note">&#8505; ' + d.notes + '</div>';
+    html += '<button class="share-btn" onclick="shareContact(' + idx + ')">&#x1F4E4; Share Contact</button>';
+    html += '</div>';
   }
-});
-
-function copyText(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    const orig = btn.innerHTML;
-    btn.innerHTML = '&#10003; Copied!';
-    btn.style.color = '#2e7d32';
-    setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
-  }).catch(() => alert(text));
+  document.getElementById('grid').innerHTML = html;
 }
 </script>
 </body>
