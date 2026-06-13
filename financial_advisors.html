@@ -11,9 +11,10 @@
   .header { background: #1F4E79; color: white; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1rem; }
   .header h1 { font-size: 16px; font-weight: 600; margin-bottom: 3px; line-height: 1.3; }
   .header p { font-size: 11px; opacity: 0.85; }
+  .pdf-link { display: none; align-items: center; gap: 8px; background: #fff; border: 1.5px solid #1F4E79; border-radius: 6px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: #1F4E79; text-decoration: none; margin-bottom: 1rem; width: 100%; justify-content: center; }
+  .pdf-link:hover { background: #e8f0fb; }
   .controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; width: 100%; }
-  .controls input[type=text],
-  .controls select { width: 100%; padding: 9px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; background: white; color: #333; max-width: 100%; }
+  .controls input[type=text], .controls select { width: 100%; padding: 9px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; background: white; color: #333; max-width: 100%; }
   .count { font-size: 12px; color: #666; margin-bottom: 0.75rem; }
   .grid { display: flex; flex-direction: column; gap: 10px; width: 100%; }
   .card { background: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 0.875rem; display: flex; flex-direction: column; gap: 7px; width: 100%; overflow: hidden; }
@@ -23,18 +24,10 @@
   .detail-row { display: flex; align-items: flex-start; gap: 6px; font-size: 13px; color: #555; width: 100%; }
   .detail-row a { color: #1F4E79; text-decoration: none; word-break: break-all; overflow-wrap: break-word; flex: 1; }
   .detail-label { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: .04em; min-width: 44px; flex-shrink: 0; padding-top: 2px; }
+  .share-btn { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 4px; padding: 7px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; cursor: pointer; font-size: 12px; color: #555; width: 100%; font-family: Arial, sans-serif; }
+  .share-btn:hover { background: #e8f0fb; color: #1F4E79; border-color: #1F4E79; }
   .status { text-align: center; padding: 2rem; color: #888; font-size: 14px; }
   .last-updated { text-align: right; font-size: 11px; color: #aaa; margin-top: 1rem; }
-
-  .pdf-link { display: none; align-items: center; gap: 8px; background: #fff; border: 1.5px solid #1F4E79; border-radius: 6px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: #1F4E79; text-decoration: none; margin-bottom: 1rem; width: 100%; justify-content: center; }
-  .pdf-link:hover { background: #e8f0fb; }
-  .pdf-link span { font-size: 16px; }
-
-  .copied-msg { font-size: 11px; color: #2e7d32; text-align: center; display: none; margin-top: 4px; }
-
-  .share-btn { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 6px; padding: 6px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; cursor: pointer; font-size: 12px; color: #555; width: 100%; }
-  .share-btn:hover { background: #e8f0fb; color: #1F4E79; border-color: #1F4E79; }
-  .share-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -43,9 +36,8 @@
   <p>Live data &middot; Updates automatically when the roster changes</p>
 </div>
 
-<a href="#" target="_blank" class="pdf-link" id="financialPDF">
-  <span>&#128196;</span> Download Financial Advisors Resources (PDF)
-</a>
+<a href="#" target="_blank" class="pdf-link" id="financialPDF">&#128196; Download Financial Advisors Resources (PDF)</a>
+
 <div class="controls">
   <input type="text" id="search" placeholder="Search by name or location..." oninput="onSearch()">
   <select id="locationSelect" onchange="onDropdown()">
@@ -59,44 +51,39 @@
 
 <script src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
-const SHEET_ID = '1hVLTYAhrRDTdEMLsBMmkTWHiz4xwM343hMJKDg9qKyw';
-const SHEET_NAME = 'Financial Advisors';
-let data = [];
+var SHEET_ID = '1hVLTYAhrRDTdEMLsBMmkTWHiz4xwM343hMJKDg9qKyw';
+var data = [];
 
 google.charts.load('current', { packages: ['corechart'] });
 google.charts.setOnLoadCallback(loadData);
-  loadPDFLink('Financial Advisors', 'financialPDF');
 
 function loadData() {
-  const query = new google.visualization.Query(
-    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&headers=1`
-  );
-  query.send(handleResponse);
+  new google.visualization.Query('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?sheet=Financial%20Advisors&headers=1').send(handleResponse);
+  new google.visualization.Query('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?sheet=Document%20Links&headers=1').send(function(r) {
+    if (r.isError()) return;
+    var t = r.getDataTable();
+    for (var i = 0; i < t.getNumberOfRows(); i++) {
+      if ((t.getValue(i,0)||'').toString().trim() === 'Financial Advisors') {
+        var link = (t.getValue(i,1)||'').toString().trim();
+        if (link) { var btn = document.getElementById('financialPDF'); btn.href = link; btn.style.display = 'flex'; }
+      }
+    }
+  });
 }
 
 function handleResponse(response) {
-  if (response.isError()) {
-    document.getElementById('grid').innerHTML = '<div class="status">&#9888; Error: ' + response.getMessage() + '</div>';
-    return;
-  }
-  const table = response.getDataTable();
+  if (response.isError()) { document.getElementById('grid').innerHTML = '<div class="status">Error: ' + response.getMessage() + '</div>'; return; }
+  var table = response.getDataTable();
   data = [];
-  for (let i = 0; i < table.getNumberOfRows(); i++) {
-    const location = (table.getValue(i, 0) || '').toString().trim();
+  var select = document.getElementById('locationSelect');
+  for (var i = 0; i < table.getNumberOfRows(); i++) {
+    var location = (table.getValue(i,0)||'').toString().trim();
     if (!location || location.toLowerCase() === 'location') continue;
-    data.push({
-      location,
-      name:  (table.getValue(i, 1) || '').toString().trim(),
-      phone: (table.getValue(i, 2) || '').toString().trim(),
-      email: (table.getValue(i, 3) || '').toString().trim()
-    });
-  }
-  const select = document.getElementById('locationSelect');
-  data.forEach(d => {
-    const opt = document.createElement('option');
-    opt.value = d.location; opt.textContent = d.location;
+    data.push({ location: location, name: (table.getValue(i,1)||'').toString().trim(), phone: (table.getValue(i,2)||'').toString().trim(), email: (table.getValue(i,3)||'').toString().trim() });
+    var opt = document.createElement('option');
+    opt.value = location; opt.textContent = location;
     select.appendChild(opt);
-  });
+  }
   document.getElementById('updated').textContent = 'Last loaded: ' + new Date().toLocaleString();
   render();
 }
@@ -104,125 +91,44 @@ function handleResponse(response) {
 function onSearch() { document.getElementById('locationSelect').value = ''; render(); }
 function onDropdown() { document.getElementById('search').value = ''; render(); }
 
+function shareContact(index) {
+  var d = data[index];
+  var lines = [];
+  if (d.location) lines.push(d.location);
+  if (d.name)     lines.push(d.name);
+  if (d.phone)    lines.push('Phone: ' + d.phone);
+  if (d.email)    lines.push('Email: ' + d.email);
+  var text = lines.join('\n');
+  if (navigator.share) { navigator.share({ title: d.name, text: text }).catch(function() { copyText(text); }); }
+  else { copyText(text); }
+}
+function copyText(text) { navigator.clipboard.writeText(text).then(function() { alert('Contact info copied to clipboard!'); }).catch(function() { alert(text); }); }
+
 function render() {
-  const q = document.getElementById('search').value.toLowerCase();
-  const location = document.getElementById('locationSelect').value;
-  const filtered = data.filter(d => {
-    if (location) return d.location === location;
-    if (q) return [d.location, d.name, d.phone, d.email].join(' ').toLowerCase().includes(q);
-    return true;
+  var q = document.getElementById('search').value.toLowerCase();
+  var location = document.getElementById('locationSelect').value;
+  var filtered = []; var indices = [];
+  data.forEach(function(d, i) {
+    var mQ = !q || [d.location,d.name,d.phone,d.email].join(' ').toLowerCase().includes(q);
+    var mL = !location || d.location === location;
+    if (mQ && mL) { filtered.push(d); indices.push(i); }
   });
-  document.getElementById('count').textContent = `Showing ${filtered.length} of ${data.length} entries`;
+  document.getElementById('count').textContent = 'Showing ' + filtered.length + ' of ' + data.length + ' entries';
   if (!filtered.length) { document.getElementById('grid').innerHTML = '<div class="status">No matching entries found.</div>'; return; }
-  document.getElementById('grid').innerHTML = filtered.map(d => `
-    <div class="card">
-      <div class="card-location">&#128205; ${d.location}</div>
-      ${d.name ? `<div class="card-name">${d.name}</div>` : ''}
-      <div class="card-details">
-        ${d.phone ? `<div class="detail-row"><span class="detail-label">Phone</span><a href="tel:${d.phone.replace(/\D/g,'')}">${d.phone}</a></div>` : ''}
-        ${d.email ? `<div class="detail-row"><span class="detail-label">Email</span><a href="mailto:${d.email}">${d.email}</a></div>` : ''}
-      </div>
-      
-      
-      <button class="share-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share Contact</button>
-    </div>`).join('');
-}
-</script>
-
-<script>
-// Load PDF link from Document Links sheet
-const DOC_SHEET_ID = '1hVLTYAhrRDTdEMLsBMmkTWHiz4xwM343hMJKDg9qKyw';
-const DOC_SHEET_NAME = 'Document Links';
-
-function loadPDFLink(programName, buttonId) {
-  const query = new google.visualization.Query(
-    `https://docs.google.com/spreadsheets/d/${DOC_SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(DOC_SHEET_NAME)}&headers=1`
-  );
-  query.send(function(response) {
-    if (response.isError()) return;
-    const table = response.getDataTable();
-    for (let i = 0; i < table.getNumberOfRows(); i++) {
-      const prog = (table.getValue(i, 0) || '').toString().trim();
-      const link = (table.getValue(i, 1) || '').toString().trim();
-      if (prog === programName && link) {
-        const btn = document.getElementById(buttonId);
-        if (btn) {
-          btn.href = link;
-          btn.style.display = 'flex';
-        }
-      }
-    }
-  });
-}
-</script>
-
-
-<script>
-function shareContact(name, unit, cell, office, email, notes) {
-  const lines = [];
-  if (unit)   lines.push(unit);
-  if (name)   lines.push(name);
-  if (cell)   lines.push('Cell: ' + cell);
-  if (office) lines.push('Office: ' + office);
-  if (email)  lines.push('Email: ' + email);
-  if (notes)  lines.push(notes);
-  const text = lines.join('\n');
-
-  if (navigator.share) {
-    navigator.share({ title: name || unit, text: text })
-      .catch(() => copyToClipboard(text));
-  } else {
-    copyToClipboard(text);
+  var html = '';
+  for (var i = 0; i < filtered.length; i++) {
+    var d = filtered[i]; var idx = indices[i];
+    html += '<div class="card">';
+    html += '<div class="card-location">&#128205; ' + d.location + '</div>';
+    if (d.name) html += '<div class="card-name">' + d.name + '</div>';
+    html += '<div class="card-details">';
+    if (d.phone) html += '<div class="detail-row"><span class="detail-label">Phone</span><a href="tel:' + d.phone.replace(/\D/g,'') + '">' + d.phone + '</a></div>';
+    if (d.email) html += '<div class="detail-row"><span class="detail-label">Email</span><a href="mailto:' + d.email + '">' + d.email + '</a></div>';
+    html += '</div>';
+    html += '<button class="share-btn" onclick="shareContact(' + idx + ')">&#x1F4E4; Share Contact</button>';
+    html += '</div>';
   }
-}
-
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    const msgs = document.querySelectorAll('.copied-msg');
-    msgs.forEach(m => m.style.display = 'none');
-    // Show the most recently clicked one
-    const active = document.querySelector('.copied-msg.active-copy');
-    if (active) { active.style.display = 'block'; setTimeout(() => { active.style.display = 'none'; active.classList.remove('active-copy'); }, 2000); }
-  }).catch(() => {
-    alert('Copied:\n' + text);
-  });
-}
-</script>
-
-<script>
-document.addEventListener('click', function(e) {
-  const btn = e.target.closest('.share-btn');
-  if (!btn) return;
-  const card = btn.closest('.card');
-  const lines = [];
-  const unit  = card.querySelector('.card-unit, .card-role, .card-location, .card-region');
-  const name  = card.querySelector('.card-name');
-  const rows  = card.querySelectorAll('.detail-row a');
-  const note  = card.querySelector('.note');
-  if (unit) lines.push(unit.textContent.trim());
-  if (name) lines.push(name.textContent.trim());
-  rows.forEach(a => {
-    const label = a.closest('.detail-row').querySelector('.detail-label');
-    lines.push((label ? label.textContent.trim() + ': ' : '') + a.textContent.trim());
-  });
-  if (note) lines.push(note.textContent.trim());
-  const text = lines.join('\n');
-
-  if (navigator.share) {
-    navigator.share({ title: (name || unit || {textContent:''}).textContent.trim(), text: text })
-      .catch(() => copyText(text, btn));
-  } else {
-    copyText(text, btn);
-  }
-});
-
-function copyText(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    const orig = btn.innerHTML;
-    btn.innerHTML = '&#10003; Copied!';
-    btn.style.color = '#2e7d32';
-    setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
-  }).catch(() => alert(text));
+  document.getElementById('grid').innerHTML = html;
 }
 </script>
 </body>
