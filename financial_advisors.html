@@ -30,10 +30,11 @@
   .pdf-link:hover { background: #e8f0fb; }
   .pdf-link span { font-size: 16px; }
 
+  .copied-msg { font-size: 11px; color: #2e7d32; text-align: center; display: none; margin-top: 4px; }
+
   .share-btn { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 6px; padding: 6px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; cursor: pointer; font-size: 12px; color: #555; width: 100%; }
   .share-btn:hover { background: #e8f0fb; color: #1F4E79; border-color: #1F4E79; }
   .share-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
-  .copied-msg { font-size: 11px; color: #2e7d32; text-align: center; display: none; margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -121,8 +122,9 @@ function render() {
         ${d.phone ? `<div class="detail-row"><span class="detail-label">Phone</span><a href="tel:${d.phone.replace(/\D/g,'')}">${d.phone}</a></div>` : ''}
         ${d.email ? `<div class="detail-row"><span class="detail-label">Email</span><a href="mailto:${d.email}">${d.email}</a></div>` : ''}
       </div>
-      <button class="share-btn" onclick="shareContact('${d.name}','${d.location}','${d.phone}','','${d.email}','')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share Contact</button>
-      <div class="copied-msg">&#10003; Copied to clipboard!</div>
+      
+      
+    <button class="share-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share Contact</button>
     </div>`).join('');
 }
 </script>
@@ -184,6 +186,43 @@ function copyToClipboard(text) {
   }).catch(() => {
     alert('Copied:\n' + text);
   });
+}
+</script>
+
+<script>
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.share-btn');
+  if (!btn) return;
+  const card = btn.closest('.card');
+  const lines = [];
+  const unit  = card.querySelector('.card-unit, .card-role, .card-location, .card-region');
+  const name  = card.querySelector('.card-name');
+  const rows  = card.querySelectorAll('.detail-row a');
+  const note  = card.querySelector('.note');
+  if (unit) lines.push(unit.textContent.trim());
+  if (name) lines.push(name.textContent.trim());
+  rows.forEach(a => {
+    const label = a.closest('.detail-row').querySelector('.detail-label');
+    lines.push((label ? label.textContent.trim() + ': ' : '') + a.textContent.trim());
+  });
+  if (note) lines.push(note.textContent.trim());
+  const text = lines.join('\n');
+
+  if (navigator.share) {
+    navigator.share({ title: (name || unit || {textContent:''}).textContent.trim(), text: text })
+      .catch(() => copyText(text, btn));
+  } else {
+    copyText(text, btn);
+  }
+});
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '&#10003; Copied!';
+    btn.style.color = '#2e7d32';
+    setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
+  }).catch(() => alert(text));
 }
 </script>
 </body>
