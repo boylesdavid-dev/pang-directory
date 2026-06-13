@@ -14,6 +14,21 @@
   .crisis-box { background: #6c3483; color: white; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
   .crisis-box h2 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
   .crisis-box a { color: white; font-weight: 700; font-size: 15px; display: block; margin-bottom: 4px; text-decoration: none; }
+  .confidential { background: #fef9e7; border: 1px solid #f9e79f; border-radius: 8px; padding: 0.875rem; margin-bottom: 1rem; font-size: 13px; color: #7d6608; }
+  .about-toggle { width: 100%; background: #e8f0fb; border: 1px solid #c5d8f5; border-radius: 6px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: #1F4E79; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .about-toggle:hover { background: #d5e5f7; }
+  .about-arrow { font-size: 11px; transition: transform 0.2s; }
+  .about-arrow.open { transform: rotate(180deg); }
+  .about-content { display: none; background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; font-size: 13px; line-height: 1.6; color: #444; }
+  .about-content.open { display: block; }
+  .about-content h2 { font-size: 14px; font-weight: 700; color: #6c3483; margin: 0.875rem 0 0.4rem; }
+  .about-content h2:first-child { margin-top: 0; }
+  .about-content p { margin-bottom: 0.5rem; }
+  .about-content .hotline-box { background: #f5eef8; border-left: 3px solid #6c3483; padding: 0.75rem; border-radius: 0 6px 6px 0; margin: 0.5rem 0; }
+  .about-content .hotline-box a { color: #6c3483; font-weight: 700; font-size: 15px; text-decoration: none; }
+  .about-content .warning-box { background: #fde8e8; border-left: 3px solid #C0392B; padding: 0.75rem; border-radius: 0 6px 6px 0; margin-top: 0.5rem; }
+  .pdf-link { display: none; align-items: center; gap: 8px; background: #fff; border: 1.5px solid #1F4E79; border-radius: 6px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: #1F4E79; text-decoration: none; margin-bottom: 1rem; width: 100%; justify-content: center; }
+  .pdf-link:hover { background: #e8f0fb; }
   .controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; width: 100%; }
   .controls input[type=text] { width: 100%; padding: 9px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; background: white; color: #333; max-width: 100%; }
   .count { font-size: 12px; color: #666; margin-bottom: 0.75rem; }
@@ -26,34 +41,10 @@
   .detail-row a { color: #1F4E79; text-decoration: none; word-break: break-all; overflow-wrap: break-word; flex: 1; }
   .detail-label { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: .04em; min-width: 44px; flex-shrink: 0; padding-top: 2px; }
   .note { font-size: 12px; color: #888; font-style: italic; border-top: 1px solid #f0f0f0; padding-top: 6px; word-break: break-word; }
+  .share-btn { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 4px; padding: 7px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; cursor: pointer; font-size: 12px; color: #555; width: 100%; font-family: Arial, sans-serif; }
+  .share-btn:hover { background: #f5eef8; color: #6c3483; border-color: #6c3483; }
   .status { text-align: center; padding: 2rem; color: #888; font-size: 14px; }
   .last-updated { text-align: right; font-size: 11px; color: #aaa; margin-top: 1rem; }
-  .confidential { background: #fef9e7; border: 1px solid #f9e79f; border-radius: 8px; padding: 0.875rem; margin-bottom: 1rem; font-size: 13px; color: #7d6608; }
-
-  .about-toggle { width: 100%; background: #e8f0fb; border: 1px solid #c5d8f5; border-radius: 6px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: #1F4E79; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-  .about-toggle:hover { background: #d5e5f7; }
-  .about-arrow { font-size: 11px; transition: transform 0.2s; }
-  .about-arrow.open { transform: rotate(180deg); }
-  .about-content { display: none; background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; font-size: 13px; line-height: 1.6; color: #444; }
-  .about-content.open { display: block; }
-  .about-content h2 { font-size: 14px; font-weight: 700; color: #6c3483; margin: 0.875rem 0 0.4rem; }
-  .about-content h2:first-child { margin-top: 0; }
-  .about-content p { margin-bottom: 0.5rem; }
-  .about-content ul { margin: 0.3rem 0 0.5rem 1.25rem; }
-  .about-content li { margin-bottom: 0.3rem; }
-  .about-content .hotline-box { background: #f5eef8; border-left: 3px solid #6c3483; padding: 0.75rem; border-radius: 0 6px 6px 0; margin: 0.5rem 0; }
-  .about-content .hotline-box a { color: #6c3483; font-weight: 700; font-size: 15px; text-decoration: none; }
-  .about-content .warning-box { background: #fde8e8; border-left: 3px solid #C0392B; padding: 0.75rem; border-radius: 0 6px 6px 0; margin-top: 0.5rem; }
-
-  .pdf-link { display: none; align-items: center; gap: 8px; background: #fff; border: 1.5px solid #1F4E79; border-radius: 6px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: #1F4E79; text-decoration: none; margin-bottom: 1rem; width: 100%; justify-content: center; }
-  .pdf-link:hover { background: #e8f0fb; }
-  .pdf-link span { font-size: 16px; }
-
-  .copied-msg { font-size: 11px; color: #2e7d32; text-align: center; display: none; margin-top: 4px; }
-
-  .share-btn { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 6px; padding: 6px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; cursor: pointer; font-size: 12px; color: #555; width: 100%; }
-  .share-btn:hover { background: #e8f0fb; color: #1F4E79; border-color: #1F4E79; }
-  .share-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -68,57 +59,32 @@
   <a href="tel:988">Veterans Crisis Line: 988 (Press 1)</a>
 </div>
 
-<div class="confidential">
-  &#128274; All reports are handled with strict confidentiality. Unrestricted and restricted reporting options are available.
-</div>
-
+<div class="confidential">&#128274; All reports are handled with strict confidentiality. Unrestricted and restricted reporting options are available.</div>
 
 <button class="about-toggle" onclick="toggleAbout()">
   &#9432; About the SAPR Program
   <span class="about-arrow" id="aboutArrow">&#9660;</span>
 </button>
 <div class="about-content" id="aboutContent">
-
   <h2>About the Program</h2>
   <p>The Sexual Assault Prevention Program (SAPR) provides training for the force, advice to leaders, advocacy for victims of sexual assault, and management of the SAPR professional force.</p>
   <p>SAPR also provides connection to community resources for victims of domestic violence and limited services for individuals experiencing sexual harassment.</p>
-
   <h2>Who We Serve</h2>
-  <p>PA NG SAPR can help all members of the military, their adult dependents, federalized civilians (DoD/DA/Contractors), and victims of sexual assault when there is a military nexus (i.e., the alleged offender is in the military).</p>
-
+  <p>PA NG SAPR can help all members of the military, their adult dependents, federalized civilians (DoD/DA/Contractors), and victims of sexual assault when there is a military nexus.</p>
   <h2>What is Sexual Assault?</h2>
   <p>Any sexual act committed without clear, voluntary, and informed consent.</p>
-
   <h2>How to Get Help</h2>
-  <div class="hotline-box">
-    Call the PA NG SAPR Hotline: <a href="tel:18669226275">866-922-6275</a>
-  </div>
-
+  <div class="hotline-box">Call the PA NG SAPR Hotline: <a href="tel:18669226275">866-922-6275</a></div>
   <h2>Reporting Options</h2>
-  <p>Eligible victims can elect a reporting option (Restricted or Unrestricted) by signing a DD Form 2910.</p>
-  <p>Victims of sexual assault may also elect to file a CATCH (a serial predator) entry by working with a SARC to file a DD Form 2910-4.</p>
-  <p>Call the hotline to learn more.</p>
-
+  <p>Eligible victims can elect a reporting option (Restricted or Unrestricted) by signing a DD Form 2910. Victims may also elect to file a CATCH entry by working with a SARC to file a DD Form 2910-4.</p>
   <h2>Retaliation</h2>
   <div class="warning-box">
-    <p>Retaliation has no place in our ranks. If a victim, SAPR professional, or someone supporting the victim feels they are the target of retaliation, please notify the Inspector General.</p>
-    <p style="margin-top:0.4rem">SAPR can assist with connecting you to the Inspector General.</p>
+    <p>Retaliation has no place in our ranks. If a victim, SAPR professional, or someone supporting the victim feels they are the target of retaliation, please notify the Inspector General. SAPR can assist with connecting you to the Inspector General.</p>
   </div>
-
 </div>
 
-<script>
-function toggleAbout() {
-  const content = document.getElementById('aboutContent');
-  const arrow = document.getElementById('aboutArrow');
-  content.classList.toggle('open');
-  arrow.classList.toggle('open');
-}
-</script>
+<a href="#" target="_blank" class="pdf-link" id="saprPDF">&#128196; Download SAPR Resources (PDF)</a>
 
-<a href="#" target="_blank" class="pdf-link" id="saprPDF">
-  <span>&#128196;</span> Download SAPR Resources (PDF)
-</a>
 <div class="controls">
   <input type="text" id="search" placeholder="Search by name or role..." oninput="render()">
 </div>
@@ -129,158 +95,76 @@ function toggleAbout() {
 
 <script src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
-const SHEET_ID = '1hVLTYAhrRDTdEMLsBMmkTWHiz4xwM343hMJKDg9qKyw';
-const SHEET_NAME = 'SAPR Contacts';
-let data = [];
+var SHEET_ID = '1hVLTYAhrRDTdEMLsBMmkTWHiz4xwM343hMJKDg9qKyw';
+var data = [];
 
 google.charts.load('current', { packages: ['corechart'] });
 google.charts.setOnLoadCallback(loadData);
-  loadPDFLink('SAPR', 'saprPDF');
 
 function loadData() {
-  const query = new google.visualization.Query(
-    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&headers=1`
-  );
-  query.send(handleResponse);
+  new google.visualization.Query('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?sheet=SAPR%20Contacts&headers=1').send(handleResponse);
+  new google.visualization.Query('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?sheet=Document%20Links&headers=1').send(function(r) {
+    if (r.isError()) return;
+    var t = r.getDataTable();
+    for (var i = 0; i < t.getNumberOfRows(); i++) {
+      if ((t.getValue(i,0)||'').toString().trim() === 'SAPR') {
+        var link = (t.getValue(i,1)||'').toString().trim();
+        if (link) { var btn = document.getElementById('saprPDF'); btn.href = link; btn.style.display = 'flex'; }
+      }
+    }
+  });
 }
 
 function handleResponse(response) {
-  if (response.isError()) {
-    document.getElementById('grid').innerHTML = '<div class="status">&#9888; Error: ' + response.getMessage() + '</div>';
-    return;
-  }
-  const table = response.getDataTable();
+  if (response.isError()) { document.getElementById('grid').innerHTML = '<div class="status">Error: ' + response.getMessage() + '</div>'; return; }
+  var table = response.getDataTable();
   data = [];
-  for (let i = 0; i < table.getNumberOfRows(); i++) {
-    const role = (table.getValue(i, 0) || '').toString().trim();
+  for (var i = 0; i < table.getNumberOfRows(); i++) {
+    var role = (table.getValue(i,0)||'').toString().trim();
     if (!role || role.toLowerCase() === 'role') continue;
-    data.push({
-      role,
-      name:  (table.getValue(i, 1) || '').toString().trim(),
-      phone: (table.getValue(i, 2) || '').toString().trim(),
-      notes: (table.getValue(i, 3) || '').toString().trim()
-    });
+    data.push({ role: role, name: (table.getValue(i,1)||'').toString().trim(), phone: (table.getValue(i,2)||'').toString().trim(), notes: (table.getValue(i,3)||'').toString().trim() });
   }
   document.getElementById('updated').textContent = 'Last loaded: ' + new Date().toLocaleString();
   render();
 }
 
+function toggleAbout() { document.getElementById('aboutContent').classList.toggle('open'); document.getElementById('aboutArrow').classList.toggle('open'); }
+
+function shareContact(index) {
+  var d = data[index];
+  var lines = [];
+  if (d.role)  lines.push(d.role);
+  if (d.name)  lines.push(d.name);
+  if (d.phone) lines.push('Phone: ' + d.phone);
+  if (d.notes) lines.push(d.notes);
+  var text = lines.join('\n');
+  if (navigator.share) { navigator.share({ title: d.name || d.role, text: text }).catch(function() { copyText(text); }); }
+  else { copyText(text); }
+}
+function copyText(text) { navigator.clipboard.writeText(text).then(function() { alert('Contact info copied to clipboard!'); }).catch(function() { alert(text); }); }
+
 function render() {
-  const q = document.getElementById('search').value.toLowerCase();
-  const filtered = data.filter(d =>
-    !q || [d.role, d.name, d.phone, d.notes].join(' ').toLowerCase().includes(q)
-  );
-  document.getElementById('count').textContent = `Showing ${filtered.length} of ${data.length} entries`;
+  var q = document.getElementById('search').value.toLowerCase();
+  var filtered = []; var indices = [];
+  data.forEach(function(d, i) {
+    if (!q || [d.role,d.name,d.phone,d.notes].join(' ').toLowerCase().includes(q)) { filtered.push(d); indices.push(i); }
+  });
+  document.getElementById('count').textContent = 'Showing ' + filtered.length + ' of ' + data.length + ' entries';
   if (!filtered.length) { document.getElementById('grid').innerHTML = '<div class="status">No matching entries found.</div>'; return; }
-  document.getElementById('grid').innerHTML = filtered.map(d => `
-    <div class="card">
-      <div class="card-role">${d.role}</div>
-      ${d.name ? `<div class="card-name">${d.name}</div>` : ''}
-      <div class="card-details">
-        ${d.phone ? `<div class="detail-row"><span class="detail-label">Phone</span><a href="tel:${d.phone.replace(/\D/g,'')}">${d.phone}</a></div>` : ''}
-      </div>
-      ${d.notes ? `<div class="note">&#8505; ${d.notes}</div>` : ''}
-      
-      
-      <button class="share-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share Contact</button>
-    </div>`).join('');
-}
-</script>
-
-<script>
-// Load PDF link from Document Links sheet
-const DOC_SHEET_ID = '1hVLTYAhrRDTdEMLsBMmkTWHiz4xwM343hMJKDg9qKyw';
-const DOC_SHEET_NAME = 'Document Links';
-
-function loadPDFLink(programName, buttonId) {
-  const query = new google.visualization.Query(
-    `https://docs.google.com/spreadsheets/d/${DOC_SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(DOC_SHEET_NAME)}&headers=1`
-  );
-  query.send(function(response) {
-    if (response.isError()) return;
-    const table = response.getDataTable();
-    for (let i = 0; i < table.getNumberOfRows(); i++) {
-      const prog = (table.getValue(i, 0) || '').toString().trim();
-      const link = (table.getValue(i, 1) || '').toString().trim();
-      if (prog === programName && link) {
-        const btn = document.getElementById(buttonId);
-        if (btn) {
-          btn.href = link;
-          btn.style.display = 'flex';
-        }
-      }
-    }
-  });
-}
-</script>
-
-
-<script>
-function shareContact(name, unit, cell, office, email, notes) {
-  const lines = [];
-  if (unit)   lines.push(unit);
-  if (name)   lines.push(name);
-  if (cell)   lines.push('Cell: ' + cell);
-  if (office) lines.push('Office: ' + office);
-  if (email)  lines.push('Email: ' + email);
-  if (notes)  lines.push(notes);
-  const text = lines.join('\n');
-
-  if (navigator.share) {
-    navigator.share({ title: name || unit, text: text })
-      .catch(() => copyToClipboard(text));
-  } else {
-    copyToClipboard(text);
+  var html = '';
+  for (var i = 0; i < filtered.length; i++) {
+    var d = filtered[i]; var idx = indices[i];
+    html += '<div class="card">';
+    html += '<div class="card-role">' + d.role + '</div>';
+    if (d.name) html += '<div class="card-name">' + d.name + '</div>';
+    html += '<div class="card-details">';
+    if (d.phone) html += '<div class="detail-row"><span class="detail-label">Phone</span><a href="tel:' + d.phone.replace(/\D/g,'') + '">' + d.phone + '</a></div>';
+    html += '</div>';
+    if (d.notes) html += '<div class="note">&#8505; ' + d.notes + '</div>';
+    html += '<button class="share-btn" onclick="shareContact(' + idx + ')">&#x1F4E4; Share Contact</button>';
+    html += '</div>';
   }
-}
-
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    const msgs = document.querySelectorAll('.copied-msg');
-    msgs.forEach(m => m.style.display = 'none');
-    // Show the most recently clicked one
-    const active = document.querySelector('.copied-msg.active-copy');
-    if (active) { active.style.display = 'block'; setTimeout(() => { active.style.display = 'none'; active.classList.remove('active-copy'); }, 2000); }
-  }).catch(() => {
-    alert('Copied:\n' + text);
-  });
-}
-</script>
-
-<script>
-document.addEventListener('click', function(e) {
-  const btn = e.target.closest('.share-btn');
-  if (!btn) return;
-  const card = btn.closest('.card');
-  const lines = [];
-  const unit  = card.querySelector('.card-unit, .card-role, .card-location, .card-region');
-  const name  = card.querySelector('.card-name');
-  const rows  = card.querySelectorAll('.detail-row a');
-  const note  = card.querySelector('.note');
-  if (unit) lines.push(unit.textContent.trim());
-  if (name) lines.push(name.textContent.trim());
-  rows.forEach(a => {
-    const label = a.closest('.detail-row').querySelector('.detail-label');
-    lines.push((label ? label.textContent.trim() + ': ' : '') + a.textContent.trim());
-  });
-  if (note) lines.push(note.textContent.trim());
-  const text = lines.join('\n');
-
-  if (navigator.share) {
-    navigator.share({ title: (name || unit || {textContent:''}).textContent.trim(), text: text })
-      .catch(() => copyText(text, btn));
-  } else {
-    copyText(text, btn);
-  }
-});
-
-function copyText(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    const orig = btn.innerHTML;
-    btn.innerHTML = '&#10003; Copied!';
-    btn.style.color = '#2e7d32';
-    setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
-  }).catch(() => alert(text));
+  document.getElementById('grid').innerHTML = html;
 }
 </script>
 </body>
