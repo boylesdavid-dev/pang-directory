@@ -46,6 +46,11 @@
   .pdf-link { display: none; align-items: center; gap: 8px; background: #fff; border: 1.5px solid #1F4E79; border-radius: 6px; padding: 9px 14px; font-size: 13px; font-weight: 600; color: #1F4E79; text-decoration: none; margin-bottom: 1rem; width: 100%; justify-content: center; }
   .pdf-link:hover { background: #e8f0fb; }
   .pdf-link span { font-size: 16px; }
+
+  .share-btn { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 6px; padding: 6px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; cursor: pointer; font-size: 12px; color: #555; width: 100%; }
+  .share-btn:hover { background: #e8f0fb; color: #1F4E79; border-color: #1F4E79; }
+  .share-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .copied-msg { font-size: 11px; color: #2e7d32; text-align: center; display: none; margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -204,6 +209,8 @@ function render() {
         ${d.phone ? `<div class="detail-row"><span class="detail-label">Phone</span><a href="tel:${d.phone.replace(/\D/g,'')}">${d.phone}</a></div>` : ''}
         ${d.email ? `<div class="detail-row"><span class="detail-label">Email</span><a href="mailto:${d.email}">${d.email}</a></div>` : ''}
       </div>
+      <button class="share-btn" onclick="shareContact('${d.name}','${d.region}','${d.phone}','','${d.email}','${d.location}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share Contact</button>
+      <div class="copied-msg">&#10003; Copied to clipboard!</div>
     </div>`).join('');
 }
 </script>
@@ -235,5 +242,37 @@ function loadPDFLink(programName, buttonId) {
 }
 </script>
 
+
+<script>
+function shareContact(name, unit, cell, office, email, notes) {
+  const lines = [];
+  if (unit)   lines.push(unit);
+  if (name)   lines.push(name);
+  if (cell)   lines.push('Cell: ' + cell);
+  if (office) lines.push('Office: ' + office);
+  if (email)  lines.push('Email: ' + email);
+  if (notes)  lines.push(notes);
+  const text = lines.join('\n');
+
+  if (navigator.share) {
+    navigator.share({ title: name || unit, text: text })
+      .catch(() => copyToClipboard(text));
+  } else {
+    copyToClipboard(text);
+  }
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const msgs = document.querySelectorAll('.copied-msg');
+    msgs.forEach(m => m.style.display = 'none');
+    // Show the most recently clicked one
+    const active = document.querySelector('.copied-msg.active-copy');
+    if (active) { active.style.display = 'block'; setTimeout(() => { active.style.display = 'none'; active.classList.remove('active-copy'); }, 2000); }
+  }).catch(() => {
+    alert('Copied:\n' + text);
+  });
+}
+</script>
 </body>
 </html>
