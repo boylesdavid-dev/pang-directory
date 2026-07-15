@@ -53,6 +53,7 @@
 <div class="mode-toggle">
   <button class="mode-btn active" id="btnUpdate" onclick="setMode('update')">&#9998; Update Existing Record</button>
   <button class="mode-btn" id="btnAdd" onclick="setMode('add')">&#43; Add New Record</button>
+  <button class="mode-btn" id="btnPDF" onclick="setMode('pdf')">&#128196; Upload Document</button>
 </div>
 
 <!-- UPDATE MODE -->
@@ -150,6 +151,9 @@ function setMode(mode) {
   document.getElementById('addMode').style.display    = mode === 'add'    ? 'block' : 'none';
   document.getElementById('btnUpdate').classList.toggle('active', mode === 'update');
   document.getElementById('btnAdd').classList.toggle('active', mode === 'add');
+  document.getElementById('btnPDF').classList.toggle('active', mode === 'pdf');
+  document.getElementById('pdfMode').style.display = mode === 'pdf' ? 'block' : 'none';
+  if (mode === 'pdf') { document.getElementById('pdf_date').value = new Date().toLocaleDateString(); }
   document.getElementById('successMsg').style.display = 'none';
   document.getElementById('errorMsg').style.display = 'none';
 }
@@ -266,5 +270,26 @@ function sendPayload(payload, btn, btnLabel) {
   });
 }
 </script>
+
+<!-- PDF UPLOAD MODE -->
+<div id="pdfMode" style="display:none">
+  <div class="card">
+    <h2>Upload Program Document</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:0.875rem">Upload a new PDF resource document for this program. This will replace the current document link shown on the directory page.</p>
+    <div class="form-group">
+      <label>Select PDF File <span class="required">*</span></label>
+      <input type="file" id="pdf_file" accept=".pdf">
+    </div>
+    <div class="form-group">
+      <label>Google Drive Share Link <span class="required">*</span></label>
+      <input type="text" id="pdf_link" placeholder="Paste the Google Drive share link for the PDF here">
+      <p style="font-size:11px;color:#888;margin-top:4px;">Upload your PDF to Google Drive, set sharing to "Anyone with the link", then paste the link above.</p>
+    </div>
+    <hr class="divider">
+    <div class="form-group"><label>Date of Submission</label><input type="text" id="pdf_date" readonly style="background:#f5f5f5;color:#888"></div>
+  </div>
+  <button class="submit-btn" onclick="submitPDF()">Update Program Document</button>
+</div>
+
 </body>
 </html>
