@@ -273,18 +273,27 @@ function submitPDF() {
   reader.onload = function(e) {
     btn.textContent = 'Uploading to Google Drive...';
     var base64 = e.target.result.split(',')[1];
-    var payload = { action: 'pdf', pdfProgram: PDF_PROGRAM, pdfBase64: base64, pdfFileName: file.name };
 
-    fetch('/api/update', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(function(r) {
-      if (!r.ok) throw new Error('Server error: ' + r.status);
-      return r.json();
-    })
-    .then(function(result) {
+    // Send directly to Apps Script using JSONP to avoid CORS
+    var callbackName = 'pdfCallback_' + Date.now();
+    var payload = { action: 'pdf', pdfProgram: PDF_PROGRAM, pdfBase64: base64, pdfFileName: file.name };
+    var encodedPayload = encodeURIComponent(JSON.stringify(payload));
+    var url = 'https://script.google.com/macros/s/AKfycbw1OSynHZ9y_sXRgW8gqEfUhXFFxFazjIFR8q6yXCbhj9XeLfhATQMyvRnc1pAOddXn/exec?callback=' + callbackName + '&payload=' + encodedPayload;
+
+    var timeout = setTimeout(function() {
+      if (window[callbackName]) {
+        delete window[callbackName];
+        var errEl = document.getElementById('errorMsg');
+        errEl.textContent = 'Upload timed out. Please try again.';
+        errEl.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Upload Document';
+      }
+    }, 60000);
+
+    window[callbackName] = function(result) {
+      clearTimeout(timeout);
+      delete window[callbackName];
+      document.head.removeChild(script);
       if (result.status === 'success') {
         var msg = document.getElementById('successMsg');
         msg.textContent = 'Document uploaded successfully! The directory page will now show the new PDF.';
@@ -292,16 +301,24 @@ function submitPDF() {
         window.scrollTo(0, 0);
         btn.style.display = 'none';
       } else {
-        throw new Error(result.message || 'Unknown error');
+        var errEl = document.getElementById('errorMsg');
+        errEl.textContent = 'Upload failed: ' + (result.message || 'Unknown error');
+        errEl.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Upload Document';
       }
-    })
-    .catch(function(err) {
+    };
+
+    var script = document.createElement('script');
+    script.onerror = function() {
+      clearTimeout(timeout);
+      delete window[callbackName];
       var errEl = document.getElementById('errorMsg');
-      errEl.textContent = 'Upload failed: ' + err.message;
+      errEl.textContent = 'Network error. Please try again.';
       errEl.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Upload Document';
-    });
+      btn.disabled = false; btn.textContent = 'Upload Document';
+    };
+    script.src = url;
+    document.head.appendChild(script);
   };
   reader.onerror = function() {
     alert('Error reading file. Please try again.');
