@@ -4,6 +4,9 @@
 [functions]
   node_bundler = "esbuild"
 
+[functions."update"]
+  timeout = 60
+
 [[redirects]]
   from = "/api/update"
   to = "/.netlify/functions/update"
