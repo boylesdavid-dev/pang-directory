@@ -239,6 +239,35 @@ function submitNew() {
   sendPayload(payload, btn, 'Add New Record');
 }
 
+
+function previewPDF() {
+  var file = document.getElementById('pdf_file').files[0];
+  var preview = document.getElementById('pdf_preview');
+  if (file) {
+    preview.textContent = '✓ Selected: ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+    preview.style.display = 'block';
+  }
+}
+
+function submitPDF() {
+  var fileInput = document.getElementById('pdf_file');
+  if (!fileInput.files[0]) { alert('Please select a PDF file.'); return; }
+  var file = fileInput.files[0];
+  if (file.type !== 'application/pdf') { alert('Please select a PDF file.'); return; }
+  var btn = document.getElementById('pdfSubmitBtn');
+  btn.disabled = true; btn.textContent = 'Uploading...';
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var base64 = e.target.result.split(',')[1];
+    var payload = { action: 'pdf', pdfProgram: PDF_PROGRAM, pdfBase64: base64, pdfFileName: file.name };
+    sendPayload(payload, btn, 'Upload Document');
+  };
+  reader.onerror = function() {
+    alert('Error reading file. Please try again.');
+    btn.disabled = false; btn.textContent = 'Upload Document';
+  };
+  reader.readAsDataURL(file);
+}
 function sendPayload(payload, btn, btnLabel) {
   fetch(NETLIFY_FN, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
   .then(function(r) { return r.json(); })
