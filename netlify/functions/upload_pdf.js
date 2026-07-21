@@ -1,58 +1,20 @@
-const crypto = require('crypto');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
 const R2_ACCOUNT_ID = 'aebe1a6e3b694992a6e386c52ca92698';
 const R2_ACCESS_KEY = '8013a19081b06927a8223b3e4ebb4938';
 const R2_SECRET_KEY = '4a7eae34630f238b7e6db4a161564649f9ac1580f53b5dc3d7804537e4a9cad9';
 const R2_BUCKET     = 'paarng-documents';
 const R2_PUBLIC_URL = 'https://pub-aebe1a6e3b694992a6e386c52ca92698.r2.dev';
-const R2_HOST       = R2_BUCKET + '.' + R2_ACCOUNT_ID + '.r2.cloudflarestorage.com';
-const R2_ENDPOINT   = 'https://' + R2_HOST;
 
-function hmac(key, data, encoding) {
-  return crypto.createHmac('sha256', key).update(data).digest(encoding);
-}
-
-function generatePresignedUrl(fileName) {
-  const now       = new Date();
-  const amzDate   = now.toISOString().replace(/[:-]|\.\d{3}/g, '').slice(0, 15) + 'Z';
-  const dateStamp = amzDate.slice(0, 8);
-  const expires   = 300;
-
-  const credentialScope = dateStamp + '/auto/s3/aws4_request';
-  const credential      = R2_ACCESS_KEY + '/' + credentialScope;
-
-  const queryParams = [
-    'X-Amz-Algorithm=AWS4-HMAC-SHA256',
-    'X-Amz-Credential=' + encodeURIComponent(credential),
-    'X-Amz-Date=' + amzDate,
-    'X-Amz-Expires=' + expires,
-    'X-Amz-SignedHeaders=content-type%3Bhost'
-  ].join('&');
-
-  const canonicalRequest = [
-    'PUT',
-    '/' + fileName,
-    queryParams,
-    'content-type:application/pdf\nhost:' + R2_HOST + '\n',
-    'content-type;host',
-    'UNSIGNED-PAYLOAD'
-  ].join('\n');
-
-  const stringToSign = [
-    'AWS4-HMAC-SHA256',
-    amzDate,
-    credentialScope,
-    crypto.createHash('sha256').update(canonicalRequest).digest('hex')
-  ].join('\n');
-
-  const signingKey = hmac(
-    hmac(hmac(hmac('AWS4' + R2_SECRET_KEY, dateStamp), 'auto'), 's3'),
-    'aws4_request'
-  );
-  const signature = hmac(signingKey, stringToSign, 'hex');
-
-  return R2_ENDPOINT + '/' + fileName + '?' + queryParams + '&X-Amz-Signature=' + signature;
-}
+const S3 = new S3Client({
+  region: 'auto',
+  endpoint: 'https://' + R2_ACCOUNT_ID + '.r2.cloudflarestorage.com',
+  credentials: {
+    accessKeyId: R2_ACCESS_KEY,
+    secretAccessKey: R2_SECRET_KEY
+  }
+});
 
 exports.handler = async function(event, context) {
   const corsHeaders = {
@@ -70,8 +32,15 @@ exports.handler = async function(event, context) {
     const { program } = JSON.parse(event.body);
     if (!program) throw new Error('Missing program name');
 
-    const fixedName    = program.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '') + '_Resources.pdf';
-    const presignedUrl = generatePresignedUrl(fixedName);
+    const fixedName = program.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '') + '_Resources.pdf';
+
+    const command = new PutObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: fixedName,
+      ContentType: 'application/pdf'
+    });
+
+    const presignedUrl = await getSignedUrl(S3, command, { expiresIn: 300 });
     const publicUrl    = R2_PUBLIC_URL + '/' + fixedName;
 
     return {
