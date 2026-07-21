@@ -13,7 +13,8 @@ const S3 = new S3Client({
   credentials: {
     accessKeyId: R2_ACCESS_KEY,
     secretAccessKey: R2_SECRET_KEY
-  }
+  },
+  forcePathStyle: true
 });
 
 exports.handler = async function(event, context) {
