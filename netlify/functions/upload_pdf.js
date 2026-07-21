@@ -5,7 +5,8 @@ const R2_ACCESS_KEY = '8013a19081b06927a8223b3e4ebb4938';
 const R2_SECRET_KEY = '4a7eae34630f238b7e6db4a161564649f9ac1580f53b5dc3d7804537e4a9cad9';
 const R2_BUCKET     = 'paarng-documents';
 const R2_PUBLIC_URL = 'https://pub-aebe1a6e3b694992a6e386c52ca92698.r2.dev';
-const R2_ENDPOINT   = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+const R2_HOST       = R2_BUCKET + '.' + R2_ACCOUNT_ID + '.r2.cloudflarestorage.com';
+const R2_ENDPOINT   = 'https://' + R2_HOST;
 
 function hmac(key, data, encoding) {
   return crypto.createHmac('sha256', key).update(data).digest(encoding);
@@ -15,24 +16,24 @@ function generatePresignedUrl(fileName) {
   const now       = new Date();
   const amzDate   = now.toISOString().replace(/[:-]|\.\d{3}/g, '').slice(0, 15) + 'Z';
   const dateStamp = amzDate.slice(0, 8);
-  const expires   = 300; // 5 minutes
+  const expires   = 300;
 
-  const credentialScope = `${dateStamp}/auto/s3/aws4_request`;
-  const credential      = `${R2_ACCESS_KEY}/${credentialScope}`;
+  const credentialScope = dateStamp + '/auto/s3/aws4_request';
+  const credential      = R2_ACCESS_KEY + '/' + credentialScope;
 
   const queryParams = [
-    ['X-Amz-Algorithm', 'AWS4-HMAC-SHA256'],
-    ['X-Amz-Credential', credential],
-    ['X-Amz-Date', amzDate],
-    ['X-Amz-Expires', expires.toString()],
-    ['X-Amz-SignedHeaders', 'content-type;host'],
-  ].map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
+    'X-Amz-Algorithm=AWS4-HMAC-SHA256',
+    'X-Amz-Credential=' + encodeURIComponent(credential),
+    'X-Amz-Date=' + amzDate,
+    'X-Amz-Expires=' + expires,
+    'X-Amz-SignedHeaders=content-type%3Bhost'
+  ].join('&');
 
   const canonicalRequest = [
     'PUT',
-    `/${R2_BUCKET}/${fileName}`,
+    '/' + fileName,
     queryParams,
-    `content-type:application/pdf\nhost:${R2_ACCOUNT_ID}.r2.cloudflarestorage.com\n`,
+    'content-type:application/pdf\nhost:' + R2_HOST + '\n',
     'content-type;host',
     'UNSIGNED-PAYLOAD'
   ].join('\n');
@@ -50,7 +51,7 @@ function generatePresignedUrl(fileName) {
   );
   const signature = hmac(signingKey, stringToSign, 'hex');
 
-  return `${R2_ENDPOINT}/${R2_BUCKET}/${fileName}?${queryParams}&X-Amz-Signature=${signature}`;
+  return R2_ENDPOINT + '/' + fileName + '?' + queryParams + '&X-Amz-Signature=' + signature;
 }
 
 exports.handler = async function(event, context) {
@@ -62,6 +63,7 @@ exports.handler = async function(event, context) {
   };
 
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: corsHeaders, body: '' };
+  if (event.httpMethod === 'GET') return { statusCode: 200, headers: corsHeaders, body: JSON.stringify({ status: 'ok' }) };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers: corsHeaders, body: JSON.stringify({ status: 'error', message: 'Method not allowed' }) };
 
   try {
@@ -70,12 +72,12 @@ exports.handler = async function(event, context) {
 
     const fixedName    = program.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '') + '_Resources.pdf';
     const presignedUrl = generatePresignedUrl(fixedName);
-    const publicUrl    = `${R2_PUBLIC_URL}/${fixedName}`;
+    const publicUrl    = R2_PUBLIC_URL + '/' + fixedName;
 
     return {
       statusCode: 200,
       headers: corsHeaders,
-      body: JSON.stringify({ status: 'success', presignedUrl, publicUrl, fileName: fixedName })
+      body: JSON.stringify({ status: 'success', presignedUrl: presignedUrl, publicUrl: publicUrl })
     };
   } catch (err) {
     return {
