@@ -253,6 +253,54 @@ async function submitNew() {
 
 
 
+
+function previewPDF() {
+  var file = document.getElementById('pdf_file').files[0];
+  var preview = document.getElementById('pdf_preview');
+  if (file) {
+    preview.textContent = '✓ Selected: ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+    preview.style.display = 'block';
+  }
+}
+
+function submitPDF() {
+  var fileInput = document.getElementById('pdf_file');
+  if (!fileInput.files[0]) { alert('Please select a PDF file.'); return; }
+  var file = fileInput.files[0];
+  if (file.type !== 'application/pdf') { alert('Please select a PDF file.'); return; }
+
+  var btn = document.getElementById('pdfSubmitBtn');
+  btn.disabled = true; btn.textContent = 'Uploading...';
+
+  fetch('/api/upload_pdf', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/pdf',
+      'X-Program-Name': PDF_PROGRAM,
+      'X-File-Name': file.name
+    },
+    body: file
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(result) {
+    if (result.status === 'success') {
+      var msg = document.getElementById('successMsg');
+      msg.textContent = 'Document uploaded successfully! The directory page will now show the new PDF.';
+      msg.style.display = 'block';
+      window.scrollTo(0, 0);
+      btn.style.display = 'none';
+    } else {
+      throw new Error(result.message || 'Unknown error');
+    }
+  })
+  .catch(function(err) {
+    var errEl = document.getElementById('errorMsg');
+    errEl.textContent = 'Upload failed: ' + err.message;
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Upload Document';
+  });
+}
 function sendPayload(payload, btn, btnLabel) {
   fetch('/api/update', {
     method: 'POST',
@@ -289,8 +337,16 @@ function sendPayload(payload, btn, btnLabel) {
 <div id="pdfMode" style="display:none">
   <div class="card">
     <h2>Upload Program Document</h2>
-    <p style="font-size:13px;color:#444;margin-bottom:1rem;">Click the button below to open the document upload form. Select <strong>Financial Advisors</strong> from the program dropdown, then upload your PDF.</p>
-    <a href="https://form.jotform.com/262007488458061" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#1F4E79;color:white;border-radius:6px;padding:12px;font-size:15px;font-weight:600;text-decoration:none;width:100%;">&#128196; Open Document Upload Form</a>
+    <p style="font-size:12px;color:#888;margin-bottom:0.875rem">Select a PDF file to upload. It will automatically be published to the directory page.</p>
+    <div class="form-group">
+      <label>Select PDF File <span class="required">*</span></label>
+      <input type="file" id="pdf_file" accept=".pdf" onchange="previewPDF()">
+      <p id="pdf_preview" style="font-size:12px;color:#2e7d32;margin-top:6px;display:none;"></p>
+    </div>
+    <hr class="divider">
+    <div class="form-group"><label>Date of Submission</label><input type="text" id="pdf_date" readonly style="background:#f5f5f5;color:#888"></div>
   </div>
+  <button class="submit-btn" id="pdfSubmitBtn" onclick="submitPDF()">Upload Document</button>
+</div>
 </div>
 </div>

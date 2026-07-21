@@ -7,7 +7,15 @@
 [functions."update"]
   timeout = 60
 
+[functions."upload_pdf"]
+  timeout = 60
+
 [[redirects]]
   from = "/api/update"
   to = "/.netlify/functions/update"
+  status = 200
+
+[[redirects]]
+  from = "/api/upload_pdf"
+  to = "/.netlify/functions/upload_pdf"
   status = 200
