@@ -1,22 +1,54 @@
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+const crypto = require('crypto');
 
-const R2_ACCOUNT_ID  = 'aebe1a6e3b694992a6e386c52ca92698';
-const R2_ACCESS_KEY  = '8013a19081b06927a8223b3e4ebb4938';
-const R2_SECRET_KEY  = '4a7eae34630f238b7e6db4a161564649f9ac1580f53b5dc3d7804537e4a9cad9';
-const R2_BUCKET      = 'paarng-documents';
-const CUSTOM_DOMAIN  = 'https://docs.pachaplains.us';
+const R2_ACCESS_KEY = '8013a19081b06927a8223b3e4ebb4938';
+const R2_SECRET_KEY = '4a7eae34630f238b7e6db4a161564649f9ac1580f53b5dc3d7804537e4a9cad9';
+const CUSTOM_DOMAIN = 'https://docs.pachaplains.us';
+const CUSTOM_HOST   = 'docs.pachaplains.us';
 
-// Use custom domain as endpoint so presigned URLs use it instead of r2.cloudflarestorage.com
-const S3 = new S3Client({
-  region: 'auto',
-  endpoint: CUSTOM_DOMAIN,
-  credentials: {
-    accessKeyId: R2_ACCESS_KEY,
-    secretAccessKey: R2_SECRET_KEY
-  },
-  forcePathStyle: false
-});
+function hmac(key, data, encoding) {
+  return crypto.createHmac('sha256', key).update(data).digest(encoding || 'buffer');
+}
+
+function generatePresignedUrl(fileName) {
+  const now       = new Date();
+  const amzDate   = now.toISOString().replace(/[:-]|\.\d{3}/g, '').slice(0, 15) + 'Z';
+  const dateStamp = amzDate.slice(0, 8);
+  const expires   = 300;
+
+  const credentialScope = dateStamp + '/auto/s3/aws4_request';
+  const credential      = R2_ACCESS_KEY + '/' + credentialScope;
+
+  const queryString = 
+    'X-Amz-Algorithm=AWS4-HMAC-SHA256' +
+    '&X-Amz-Credential=' + encodeURIComponent(credential) +
+    '&X-Amz-Date=' + amzDate +
+    '&X-Amz-Expires=' + expires +
+    '&X-Amz-SignedHeaders=content-type%3Bhost';
+
+  const canonicalRequest = [
+    'PUT',
+    '/' + fileName,
+    queryString,
+    'content-type:application/pdf\nhost:' + CUSTOM_HOST + '\n',
+    'content-type;host',
+    'UNSIGNED-PAYLOAD'
+  ].join('\n');
+
+  const stringToSign = [
+    'AWS4-HMAC-SHA256',
+    amzDate,
+    credentialScope,
+    crypto.createHash('sha256').update(canonicalRequest).digest('hex')
+  ].join('\n');
+
+  const signingKey = hmac(
+    hmac(hmac(hmac('AWS4' + R2_SECRET_KEY, dateStamp), 'auto'), 's3'),
+    'aws4_request'
+  );
+  const signature = hmac(signingKey, stringToSign, 'hex');
+
+  return CUSTOM_DOMAIN + '/' + fileName + '?' + queryString + '&X-Amz-Signature=' + signature;
+}
 
 exports.handler = async function(event, context) {
   const corsHeaders = {
@@ -34,15 +66,8 @@ exports.handler = async function(event, context) {
     const { program } = JSON.parse(event.body);
     if (!program) throw new Error('Missing program name');
 
-    const fixedName = program.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '') + '_Resources.pdf';
-
-    const command = new PutObjectCommand({
-      Bucket: R2_BUCKET,
-      Key: fixedName,
-      ContentType: 'application/pdf'
-    });
-
-    const presignedUrl = await getSignedUrl(S3, command, { expiresIn: 300 });
+    const fixedName    = program.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '') + '_Resources.pdf';
+    const presignedUrl = generatePresignedUrl(fixedName);
     const publicUrl    = CUSTOM_DOMAIN + '/' + fixedName;
 
     return {
