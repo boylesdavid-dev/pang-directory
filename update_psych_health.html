@@ -337,36 +337,28 @@ function submitPDF() {
 
   var btn = document.getElementById('pdfSubmitBtn');
   btn.disabled = true;
-  btn.textContent = 'Preparing upload...';
+  btn.textContent = 'Uploading...';
 
-  // Step 1: Get presigned URL from Netlify function
-  fetch('/api/upload_pdf', {
+  // Upload directly to Cloudflare Worker which saves to R2
+  fetch('https://paarng-upload.boyles-david.workers.dev', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ program: PDF_PROGRAM })
+    headers: {
+      'Content-Type': 'application/pdf',
+      'X-Program-Name': PDF_PROGRAM
+    },
+    body: file
   })
   .then(function(r) { return r.json(); })
   .then(function(result) {
-    if (result.status !== 'success') throw new Error(result.message);
+    if (result.status !== 'success') throw new Error(result.message || 'Upload failed');
 
-    btn.textContent = 'Uploading to storage...';
+    btn.textContent = 'Updating directory...';
 
-    // Step 2: Upload file directly to R2 using presigned URL
-    return fetch(result.presignedUrl, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/pdf' },
-      body: file
-    }).then(function(r2res) {
-      if (!r2res.ok) throw new Error('Storage upload failed: ' + r2res.status);
-
-      btn.textContent = 'Updating directory...';
-
-      // Step 3: Notify Apps Script to update Google Sheet
-      return fetch('/api/update', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'pdf', pdfProgram: PDF_PROGRAM, pdfLink: result.publicUrl })
-      });
+    // Update Google Sheet with the public URL
+    return fetch('/api/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'pdf', pdfProgram: PDF_PROGRAM, pdfLink: result.link })
     });
   })
   .then(function(r) { return r.json(); })
@@ -378,7 +370,7 @@ function submitPDF() {
       window.scrollTo(0, 0);
       btn.style.display = 'none';
     } else {
-      throw new Error(result.message || 'Unknown error');
+      throw new Error(result.message || 'Sheet update failed');
     }
   })
   .catch(function(err) {
