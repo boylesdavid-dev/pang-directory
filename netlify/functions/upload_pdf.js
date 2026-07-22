@@ -5,7 +5,7 @@ const R2_ACCOUNT_ID = 'aebe1a6e3b694992a6e386c52ca92698';
 const R2_ACCESS_KEY = '8013a19081b06927a8223b3e4ebb4938';
 const R2_SECRET_KEY = '4a7eae34630f238b7e6db4a161564649f9ac1580f53b5dc3d7804537e4a9cad9';
 const R2_BUCKET     = 'paarng-documents';
-const R2_PUBLIC_URL = 'https://pub-aebe1a6e3b694992a6e386c52ca92698.r2.dev';
+const R2_PUBLIC_URL = 'https://docs.pachaplains.us';
 
 const S3 = new S3Client({
   region: 'auto',
