@@ -1,20 +1,21 @@
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
-const R2_ACCOUNT_ID = 'aebe1a6e3b694992a6e386c52ca92698';
-const R2_ACCESS_KEY = '8013a19081b06927a8223b3e4ebb4938';
-const R2_SECRET_KEY = '4a7eae34630f238b7e6db4a161564649f9ac1580f53b5dc3d7804537e4a9cad9';
-const R2_BUCKET     = 'paarng-documents';
-const R2_PUBLIC_URL = 'https://docs.pachaplains.us';
+const R2_ACCOUNT_ID  = 'aebe1a6e3b694992a6e386c52ca92698';
+const R2_ACCESS_KEY  = '8013a19081b06927a8223b3e4ebb4938';
+const R2_SECRET_KEY  = '4a7eae34630f238b7e6db4a161564649f9ac1580f53b5dc3d7804537e4a9cad9';
+const R2_BUCKET      = 'paarng-documents';
+const CUSTOM_DOMAIN  = 'https://docs.pachaplains.us';
 
+// Use custom domain as endpoint so presigned URLs use it instead of r2.cloudflarestorage.com
 const S3 = new S3Client({
   region: 'auto',
-  endpoint: 'https://' + R2_ACCOUNT_ID + '.r2.cloudflarestorage.com',
+  endpoint: CUSTOM_DOMAIN,
   credentials: {
     accessKeyId: R2_ACCESS_KEY,
     secretAccessKey: R2_SECRET_KEY
   },
-  forcePathStyle: true
+  forcePathStyle: false
 });
 
 exports.handler = async function(event, context) {
@@ -42,7 +43,7 @@ exports.handler = async function(event, context) {
     });
 
     const presignedUrl = await getSignedUrl(S3, command, { expiresIn: 300 });
-    const publicUrl    = R2_PUBLIC_URL + '/' + fixedName;
+    const publicUrl    = CUSTOM_DOMAIN + '/' + fixedName;
 
     return {
       statusCode: 200,
