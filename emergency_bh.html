@@ -25,12 +25,12 @@
   .about-content .emergency-box { background: #fde8e8; border-left: 3px solid #C0392B; padding: 0.75rem; border-radius: 0 6px 6px 0; margin-bottom: 0.75rem; }
   .about-content .note-box { background: #fff8e1; border-left: 3px solid #f9a825; padding: 0.75rem; border-radius: 0 6px 6px 0; margin-top: 0.5rem; }
   .section-title { font-size: 13px; font-weight: 700; color: white; padding: 6px 12px; border-radius: 6px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .05em; }
-  .section-blue { background: #1F4E79; }
-  .section-red { background: #C0392B; }
-  .section-teal { background: #0e6b6b; }
+  .section-teal   { background: #0e6b6b; }
+  .section-red    { background: #C0392B; }
   .section-purple { background: #5d4e8a; }
-  .section-gold { background: #7d6200; }
-  .static-card { background: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 0.875rem; margin-bottom: 0.875rem; }
+  .section-blue   { background: #1F4E79; }
+  .section-gold   { background: #7d6200; }
+  .static-card { background: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 0.875rem; margin-bottom: 1rem; }
   .hotline-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
   .hotline-row:last-child { border-bottom: none; }
   .hotline-name { font-weight: 500; color: #333; }
@@ -38,7 +38,12 @@
   .warmline-number { font-size: 22px; font-weight: 700; color: #0e6b6b; text-align: center; padding: 0.5rem 0; }
   .warmline-number a { color: inherit; text-decoration: none; }
   .warmline-desc { font-size: 12px; color: #777; text-align: center; }
-  .grid { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 1rem; }
+  .section-group { margin-bottom: 1rem; }
+  .group-heading { font-size: 13px; font-weight: 700; color: white; background: #1F4E79; padding: 6px 12px; border-radius: 6px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .05em; }
+  .group-heading.chaplains { background: #5d4e8a; }
+  .group-heading.bh { background: #1F4E79; }
+  .group-heading.county { background: #7d6200; }
+  .grid { display: flex; flex-direction: column; gap: 10px; width: 100%; }
   .card { background: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 0.875rem; display: flex; flex-direction: column; gap: 7px; width: 100%; overflow: hidden; }
   .card-role { font-size: 11px; font-weight: 700; color: #1F4E79; text-transform: uppercase; letter-spacing: .04em; }
   .card-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
@@ -49,12 +54,12 @@
   .note { font-size: 12px; color: #888; font-style: italic; border-top: 1px solid #f0f0f0; padding-top: 6px; word-break: break-word; }
   .share-btn { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 4px; padding: 7px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; cursor: pointer; font-size: 12px; color: #555; width: 100%; font-family: Arial, sans-serif; }
   .share-btn:hover { background: #e8f0fb; color: #1F4E79; border-color: #1F4E79; }
-  .status { text-align: center; padding: 2rem; color: #888; font-size: 14px; }
-  .last-updated { text-align: right; font-size: 11px; color: #aaa; margin-top: 1rem; }
   .county-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
   .county-row:last-child { border-bottom: none; }
   .county-name { font-weight: 500; color: #333; }
   .county-phone a { color: #1F4E79; text-decoration: none; font-weight: 500; }
+  .status { text-align: center; padding: 2rem; color: #888; font-size: 14px; }
+  .last-updated { text-align: right; font-size: 11px; color: #aaa; margin-top: 1rem; }
 </style>
 </head>
 <body>
@@ -113,37 +118,43 @@
   </div>
 </div>
 
-<!-- Regional Social Worker Warm Line -->
+<!-- 1. Warm Line -->
 <div class="section-title section-teal">&#128222; Regional Social Worker Warm Line</div>
-<div class="static-card">
+<div class="static-card" style="margin-bottom:1rem">
   <div class="warmline-number"><a href="tel:18888182773">1-888-818-2773</a></div>
   <div class="warmline-desc">Available 24/7 for non-crisis support and referrals</div>
 </div>
 
-<!-- Crisis Hotlines -->
+<!-- 2. Crisis Hotlines -->
 <div class="section-title section-red">&#9888; Crisis Hotlines</div>
-<div class="static-card">
+<div class="static-card" style="margin-bottom:1rem">
   <div class="hotline-row"><span class="hotline-name">National Suicide Prevention Lifeline</span><span class="hotline-phone"><a href="tel:988">988</a></span></div>
   <div class="hotline-row"><span class="hotline-name">Veterans Crisis Line</span><span class="hotline-phone"><a href="tel:988">988 Press 1</a></span></div>
   <div class="hotline-row"><span class="hotline-name">Military One Source</span><span class="hotline-phone"><a href="tel:18003429647">1-800-342-9647</a></span></div>
   <div class="hotline-row"><span class="hotline-name">SAMHSA Helpline</span><span class="hotline-phone"><a href="tel:18003424673">1-800-342-4673</a></span></div>
 </div>
 
-<!-- Live Contacts from Google Sheet -->
-<div class="section-title section-blue">&#128100; BH Contacts</div>
-<div class="grid" id="contactsGrid"><div class="status">Loading contacts...</div></div>
+<!-- 3. Chaplains (from sheet) -->
+<div class="section-title section-purple" id="chaplainHeading" style="display:none">&#9792; Chaplains</div>
+<div class="grid" id="chaplainsGrid" style="margin-bottom:1rem"></div>
 
-<!-- County Crisis Lines from Google Sheet -->
-<div class="section-title section-gold">&#128205; County Crisis Lines</div>
-<div class="static-card" id="countyGrid"><div class="status">Loading county crisis lines...</div></div>
+<!-- 4. BH Contacts (from sheet) -->
+<div class="section-title section-blue" id="bhHeading" style="display:none">&#128100; BH Contacts</div>
+<div class="grid" id="bhGrid" style="margin-bottom:1rem"></div>
+
+<!-- 5. County Crisis Lines (from sheet) -->
+<div class="section-title section-gold" id="countyHeading" style="display:none">&#128205; County Crisis Lines</div>
+<div class="static-card" id="countyGrid" style="margin-bottom:1rem;display:none"></div>
+
+<!-- Dynamic sections from sheet -->
+<div id="dynamicSections"></div>
 
 <div class="last-updated" id="updated"></div>
 
 <script src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
 var SHEET_ID = '1hVLTYAhrRDTdEMLsBMmkTWHiz4xwM343hMJKDg9qKyw';
-var contacts = [];
-var counties = [];
+var allData = [];
 
 google.charts.load('current', { packages: ['corechart'] });
 google.charts.setOnLoadCallback(loadData);
@@ -156,34 +167,29 @@ function loadData() {
 
 function handleResponse(response) {
   if (response.isError()) {
-    document.getElementById('contactsGrid').innerHTML = '<div class="status">Error: ' + response.getMessage() + '</div>';
+    document.getElementById('bhGrid').innerHTML = '<div class="status">Error: ' + response.getMessage() + '</div>';
     return;
   }
   var table = response.getDataTable();
-  contacts = [];
-  counties = [];
+  allData = [];
 
   for (var i = 0; i < table.getNumberOfRows(); i++) {
-    var role = (table.getValue(i,0)||'').toString().trim();
-    if (!role || role.toLowerCase() === 'role') continue;
-    var entry = {
-      role:   role,
-      name:   (table.getValue(i,1)||'').toString().trim(),
-      cell:   (table.getValue(i,2)||'').toString().trim(),
-      office: (table.getValue(i,3)||'').toString().trim(),
-      email:  (table.getValue(i,4)||'').toString().trim(),
-      notes:  (table.getValue(i,5)||'').toString().trim()
-    };
-    if (role.toLowerCase().includes('county')) {
-      counties.push(entry);
-    } else {
-      contacts.push(entry);
-    }
+    var section = (table.getValue(i,0)||'').toString().trim();
+    var role    = (table.getValue(i,1)||'').toString().trim();
+    if (!section || section.toLowerCase() === 'section') continue;
+    allData.push({
+      section: section,
+      role:    role,
+      name:    (table.getValue(i,2)||'').toString().trim(),
+      cell:    (table.getValue(i,3)||'').toString().trim(),
+      office:  (table.getValue(i,4)||'').toString().trim(),
+      email:   (table.getValue(i,5)||'').toString().trim(),
+      notes:   (table.getValue(i,6)||'').toString().trim()
+    });
   }
 
   document.getElementById('updated').textContent = 'Last loaded: ' + new Date().toLocaleString();
-  renderContacts();
-  renderCounties();
+  render();
 }
 
 function toggleAbout() {
@@ -192,7 +198,7 @@ function toggleAbout() {
 }
 
 function shareContact(index) {
-  var d = contacts[index];
+  var d = allData[index];
   var lines = [];
   if (d.role)   lines.push(d.role);
   if (d.name)   lines.push(d.name);
@@ -206,37 +212,76 @@ function shareContact(index) {
 }
 function copyText(text) { navigator.clipboard.writeText(text).then(function() { alert('Contact info copied to clipboard!'); }).catch(function() { alert(text); }); }
 
-function renderContacts() {
-  if (!contacts.length) { document.getElementById('contactsGrid').innerHTML = '<div class="status">No contacts found.</div>'; return; }
-  var html = '';
-  for (var i = 0; i < contacts.length; i++) {
-    var d = contacts[i];
-    html += '<div class="card">';
-    html += '<div class="card-role">' + d.role + '</div>';
-    if (d.name) html += '<div class="card-name">' + d.name + '</div>';
-    html += '<div class="card-details">';
-    if (d.cell)   html += '<div class="detail-row"><span class="detail-label">Cell</span><a href="tel:' + d.cell.replace(/\D/g,'') + '">' + d.cell + '</a></div>';
-    if (d.office) html += '<div class="detail-row"><span class="detail-label">Office</span><a href="tel:' + d.office.replace(/\D/g,'') + '">' + d.office + '</a></div>';
-    if (d.email)  html += '<div class="detail-row"><span class="detail-label">Email</span><a href="mailto:' + d.email + '">' + d.email + '</a></div>';
-    html += '</div>';
-    if (d.notes) html += '<div class="note">&#8505; ' + d.notes + '</div>';
-    html += '<button class="share-btn" onclick="shareContact(' + i + ')">&#x1F4E4; Share Contact</button>';
-    html += '</div>';
-  }
-  document.getElementById('contactsGrid').innerHTML = html;
+function cardHTML(d, index) {
+  var html = '<div class="card">';
+  html += '<div class="card-role">' + d.role + '</div>';
+  if (d.name) html += '<div class="card-name">' + d.name + '</div>';
+  html += '<div class="card-details">';
+  if (d.cell)   html += '<div class="detail-row"><span class="detail-label">Cell</span><a href="tel:' + d.cell.replace(/\D/g,'') + '">' + d.cell + '</a></div>';
+  if (d.office) html += '<div class="detail-row"><span class="detail-label">Office</span><a href="tel:' + d.office.replace(/\D/g,'') + '">' + d.office + '</a></div>';
+  if (d.email)  html += '<div class="detail-row"><span class="detail-label">Email</span><a href="mailto:' + d.email + '">' + d.email + '</a></div>';
+  html += '</div>';
+  if (d.notes) html += '<div class="note">&#8505; ' + d.notes + '</div>';
+  html += '<button class="share-btn" onclick="shareContact(' + index + ')">&#x1F4E4; Share Contact</button>';
+  html += '</div>';
+  return html;
 }
 
-function renderCounties() {
-  if (!counties.length) { document.getElementById('countyGrid').innerHTML = '<div class="status">No county lines found.</div>'; return; }
-  var html = '';
-  for (var i = 0; i < counties.length; i++) {
-    var d = counties[i];
-    html += '<div class="county-row">';
-    html += '<span class="county-name">' + d.role.replace(' Crisis', '') + '</span>';
-    html += '<span class="county-phone"><a href="tel:' + d.cell.replace(/\D/g,'') + '">' + d.cell + '</a></span>';
-    html += '</div>';
+function render() {
+  // Group data by section
+  var sections = {};
+  var sectionOrder = [];
+  allData.forEach(function(d, i) {
+    if (!sections[d.section]) { sections[d.section] = []; sectionOrder.push(d.section); }
+    sections[d.section].push({ d: d, index: i });
+  });
+
+  var chaplainHtml = '';
+  var bhHtml = '';
+  var countyHtml = '';
+  var dynamicHtml = '';
+
+  sectionOrder.forEach(function(section) {
+    var items = sections[section];
+    var sectionLower = section.toLowerCase();
+
+    if (sectionLower === 'chaplains') {
+      items.forEach(function(item) { chaplainHtml += cardHTML(item.d, item.index); });
+    } else if (sectionLower === 'bh contacts') {
+      items.forEach(function(item) { bhHtml += cardHTML(item.d, item.index); });
+    } else if (sectionLower === 'county crisis lines') {
+      items.forEach(function(item) {
+        countyHtml += '<div class="county-row">';
+        countyHtml += '<span class="county-name">' + item.d.role.replace(' Crisis', '') + '</span>';
+        countyHtml += '<span class="county-phone"><a href="tel:' + item.d.cell.replace(/\D/g,'') + '">' + item.d.cell + '</a></span>';
+        countyHtml += '</div>';
+      });
+    } else {
+      // Any other section — render dynamically
+      dynamicHtml += '<div class="section-title section-blue">' + section + '</div>';
+      dynamicHtml += '<div class="grid" style="margin-bottom:1rem">';
+      items.forEach(function(item) { dynamicHtml += cardHTML(item.d, item.index); });
+      dynamicHtml += '</div>';
+    }
+  });
+
+  if (chaplainHtml) {
+    document.getElementById('chaplainHeading').style.display = 'block';
+    document.getElementById('chaplainsGrid').innerHTML = chaplainHtml;
   }
-  document.getElementById('countyGrid').innerHTML = html;
+  if (bhHtml) {
+    document.getElementById('bhHeading').style.display = 'block';
+    document.getElementById('bhGrid').innerHTML = bhHtml;
+  }
+  if (countyHtml) {
+    document.getElementById('countyHeading').style.display = 'block';
+    var countyEl = document.getElementById('countyGrid');
+    countyEl.innerHTML = countyHtml;
+    countyEl.style.display = 'block';
+  }
+  if (dynamicHtml) {
+    document.getElementById('dynamicSections').innerHTML = dynamicHtml;
+  }
 }
 </script>
 </body>
