@@ -309,6 +309,7 @@ function submitPDF() {
   var file = fileInput.files[0];
   if (file.type !== 'application/pdf') { alert('Please select a PDF file.'); return; }
 
+  var pdfProgram = document.getElementById('pdf_program').value;
   var btn = document.getElementById('pdfSubmitBtn');
   btn.disabled = true;
   btn.textContent = 'Uploading...';
@@ -318,7 +319,7 @@ function submitPDF() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/pdf',
-      'X-Program-Name': PDF_PROGRAM
+      'X-Program-Name': pdfProgram
     },
     body: file
   })
@@ -332,7 +333,7 @@ function submitPDF() {
     return fetch('/api/update', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'pdf', pdfProgram: PDF_PROGRAM, pdfLink: result.link })
+      body: JSON.stringify({ action: 'pdf', pdfProgram: pdfProgram, pdfLink: result.link })
     });
   })
   .then(function(r) { return r.json(); })
@@ -392,6 +393,13 @@ function sendPayload(payload, btn, btnLabel) {
   <div class="card">
     <h2>Upload Program Document</h2>
     <p style="font-size:12px;color:#888;margin-bottom:0.875rem">Select a PDF file to upload. It will automatically be published to the directory page.</p>
+    <div class="form-group">
+      <label>Which document? <span class="required">*</span></label>
+      <select id="pdf_program">
+        <option value="Family Programs">Family Programs Resources</option>
+        <option value="SMFS Monthly Newsletter">SMFS Monthly Newsletter</option>
+      </select>
+    </div>
     <div class="form-group">
       <label>Select PDF File <span class="required">*</span></label>
       <input type="file" id="pdf_file" accept=".pdf" onchange="previewPDF()">
