@@ -83,6 +83,7 @@
 </div>
 
 <a href="#" target="_blank" class="pdf-link" id="familyPDF">&#128196; Download Family Programs Resources (PDF)</a>
+<a href="#" target="_blank" class="pdf-link" id="smfsNewsletterPDF">&#128240; SMFS Monthly Newsletter (PDF)</a>
 
 <!-- Family Programs Assistance Form -->
 <div style="background:white;border:1px solid #e0e0e0;border-radius:8px;padding:0.875rem;margin-bottom:1rem;display:flex;align-items:center;gap:12px;">
@@ -122,10 +123,10 @@ function loadData() {
     if (r.isError()) return;
     var t = r.getDataTable();
     for (var i = 0; i < t.getNumberOfRows(); i++) {
-      if ((t.getValue(i,0)||'').toString().trim() === 'Family Programs') {
-        var link = (t.getValue(i,1)||'').toString().trim();
-        if (link) { var btn = document.getElementById('familyPDF'); btn.href = link; btn.style.display = 'flex'; }
-      }
+      var program = (t.getValue(i,0)||'').toString().trim();
+      var link = (t.getValue(i,1)||'').toString().trim();
+      var btnId = program === 'Family Programs' ? 'familyPDF' : (program === 'SMFS Monthly Newsletter' ? 'smfsNewsletterPDF' : '');
+      if (btnId && link) { var btn = document.getElementById(btnId); btn.href = link; btn.style.display = 'flex'; }
     }
   });
 }
